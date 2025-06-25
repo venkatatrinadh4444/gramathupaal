@@ -8,3 +8,17 @@
     box-sizing: border-box;
     font-family: var(--font-inter);
 }
+
+::-webkit-scrollbar {
+    @apply hidden;
+}
+
+@media screen and (max-width:630px) {
+    .cattle-management-options {
+        flex-direction: column;
+        width: 100% !important;
+    }
+    .cattle-management-options div {
+        width: 100%;
+    }
+}
