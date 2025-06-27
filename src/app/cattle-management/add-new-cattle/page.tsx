@@ -1,10 +1,18 @@
+"use client"
+
 import Image from "next/image";
 import arrow from "@/assets/cattle-dashboard-arrow.png";
 import cross from "@/assets/animal-detail-cross.png";
 import tick from "@/assets/animal-detail-tick.png";
 import imageUpload from "@/assets/image-upload.png";
+import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
 
 const AddNewCattle = () => {
+
+  const API_URI=process.env.NEXT_PUBLIC_BACKEND_API_URI
+
   const inseminationTypes = [
     "NATURAL_SERVICE",
     "ARTIFICIAL_INSEMINATION",
@@ -38,8 +46,64 @@ const AddNewCattle = () => {
     "LOCAL_NON_DESCRIPT",
   ];
 
+  const [data,setData]=useState({
+    cattleName:'',
+    healthStatus:'HEALTHY',
+    type:'COW',
+    weight:'',
+    snf:'',
+    fatherInsemination:inseminationTypes[0],
+    parent:parentOrigin[0],
+    breed:breeds[0],
+    birthDate:'',
+    farmEntry:'',
+    purchaseAmount:'',
+    vendorName:''
+  })
+  const [images,setImages]=useState([]) as any
+
+  const stringInputChangeHandler=(e:React.ChangeEvent<HTMLInputElement>)=> {
+    setData({...data,[e.target.name]:e.target.value})
+  }
+
+  const selectInputChangeHandler=(e:React.ChangeEvent<HTMLSelectElement>)=> {
+    setData({...data,[e.target.name]:e.target.value})
+  }
+
+  const fileChangeHandler=(e:React.ChangeEvent<HTMLInputElement>)=> {
+    setImages([...images,e.target.files?.[0]])
+  }
+
+  const sumbitHandler=(e:React.FormEvent<HTMLFormElement>)=> {
+    e.preventDefault()
+    const formData = new FormData();
+
+    formData.append('cattleName', data.cattleName);
+    formData.append('healthStatus', data.healthStatus);
+    formData.append('type', data.type);
+    formData.append('weight', data.weight);
+    formData.append('snf', data.snf);
+    formData.append('fatherInsemination', data.fatherInsemination);
+    formData.append('parent', data.parent);
+    formData.append('breed', data.breed);
+    formData.append('birthDate', data.birthDate);
+    formData.append('farmEntry', data.farmEntry);
+    formData.append('purchaseAmount', data.purchaseAmount);
+    formData.append('vendorName', data.vendorName);
+
+    if(images.length<2 || images.length>2) {
+      return toast.error('Maximum two images are allowed')
+    }
+
+    images.map((eachImage:File)=>formData.append('images',eachImage))
+
+    axios.post(`${API_URI}/api/dashboard/animal/add-animal`,formData,{withCredentials:true}).then(res=>console.log(res)).catch(err=>console.log(err))
+
+  }
   return (
-    <div className="flex-1 rounded-2xl bg-white px-4 py-6 mr-4 mb-6">
+    <>
+    <ToastContainer/>
+    <form className="flex-1 rounded-2xl bg-white px-4 py-6 mr-4 mb-6" onSubmit={sumbitHandler}>
       <div className="flex justify-between lg:items-end flex-col lg:flex-row items-start gap-4 lg:gap-0">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
@@ -57,10 +121,11 @@ const AddNewCattle = () => {
           <div className="bg-[#4A4A4A] rounded flex items-center px-2 cursor-pointer">
             <Image src={cross} alt="cross" className="w-[18px] h-auto" />
           </div>
-          <div className="bg-primary px-2 py-2 rounded flex gap-1 items-center text-white cursor-pointer">
+          <label htmlFor="submitBtn" className="bg-primary px-2 py-2 rounded flex gap-1 items-center text-white cursor-pointer">
             <Image src={tick} alt="cross" className="w-[18px] h-auto" />
             <p>Save Information</p>
-          </div>
+            <input type="submit" id="submitBtn" className="hidden"/>
+          </label>
         </div>
       </div>
 
@@ -81,6 +146,7 @@ const AddNewCattle = () => {
               type="text"
               placeholder="Enter Cattle ID"
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
+              required name="cattleName" value={data.cattleName} onChange={stringInputChangeHandler}
             />
           </div>
 
@@ -90,7 +156,7 @@ const AddNewCattle = () => {
             </h3>
             <select
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
-              defaultValue="HEALTHY"
+              required name="healthStatus" value={data.healthStatus} onChange={selectInputChangeHandler}
             >
               <option value="HEALTHY">Healthy</option>
               <option value="INJURED">Injured</option>
@@ -103,7 +169,7 @@ const AddNewCattle = () => {
             </h3>
             <select
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
-              defaultValue="COW"
+              required name="type" value={data.type} onChange={selectInputChangeHandler}
             >
               <option value="COW">Cow</option>
               <option value="BUFFALO">Buffalo</option>
@@ -119,6 +185,7 @@ const AddNewCattle = () => {
               type="number"
               placeholder="Enter Cattle Weight"
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
+              required name="weight" value={data.weight} onChange={stringInputChangeHandler}
             />
           </div>
 
@@ -130,6 +197,7 @@ const AddNewCattle = () => {
               type="text"
               placeholder="Enter SNF%"
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
+              required name="snf" value={data.snf} onChange={stringInputChangeHandler}
             />
           </div>
         </div>
@@ -147,12 +215,12 @@ const AddNewCattle = () => {
         <div className="flex justify-between mt-4">
           <div>
             <h3 className="text-heading font-dmSans text-[16px] font-[500]">
-              Upload Cattle Image *
+              {images.length===0?"Upload":"Uploaded"} Cattle Image {images.length===0?"*":<span className="text-primary cursor-pointer" title="upload count">{images.length}</span>}
             </h3>
-            <div className=" bg-background mt-1.5 w-full cursor-pointer rounded-md flex gap-2 py-2.5 justify-center">
-              <label htmlFor="imageUpload" className="text-para text-sm">
+            <label className=" bg-background mt-1.5 w-full rounded-md flex gap-2 py-2.5 justify-center cursor-pointer" htmlFor="imageUpload">
+              <p  className="text-para text-sm">
                 Cattle Image
-              </label>
+              </p>
               <Image
                 src={imageUpload}
                 alt="upload image"
@@ -160,11 +228,13 @@ const AddNewCattle = () => {
               />
               <input
                 type="file"
+                multiple
                 id="imageUpload"
                 placeholder="Cattle Image"
                 className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none hidden"
+                required onChange={fileChangeHandler}
               />
-            </div>
+            </label>
           </div>
 
           <div>
@@ -173,7 +243,7 @@ const AddNewCattle = () => {
             </h3>
             <select
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
-              defaultValue={inseminationTypes[0]}
+              required name="fatherInsemination" value={data.fatherInsemination} onChange={selectInputChangeHandler}
             >
               {inseminationTypes?.map((eachOption, index) => {
                 return (
@@ -191,7 +261,7 @@ const AddNewCattle = () => {
             </h3>
             <select
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
-              defaultValue={parentOrigin[0]}
+              required name="parent" value={data.parent} onChange={selectInputChangeHandler}
             >
               {parentOrigin?.map((eachOption, index) => {
                 return (
@@ -209,7 +279,7 @@ const AddNewCattle = () => {
             </h3>
             <select
               className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
-              defaultValue={breeds[0]}
+              required name="breed" value={data.breed} onChange={selectInputChangeHandler}
             >
               {breeds?.map((eachOption, index) => {
                 return (
@@ -244,6 +314,7 @@ const AddNewCattle = () => {
                 type="date"
                 placeholder="Select Date"
                 className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
+                required name="birthDate" value={data.birthDate} onChange={stringInputChangeHandler}
               />
             </div>
             <div>
@@ -254,6 +325,7 @@ const AddNewCattle = () => {
                 type="date"
                 placeholder="Select Date"
                 className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
+                required name="farmEntry" value={data.farmEntry} onChange={stringInputChangeHandler}
               />
             </div>
           </div>
@@ -277,6 +349,7 @@ const AddNewCattle = () => {
                 type="text"
                 placeholder="Purchase Amount"
                 className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
+                required name="purchaseAmount" value={data.purchaseAmount} onChange={stringInputChangeHandler}
               />
             </div>
             <div>
@@ -287,12 +360,14 @@ const AddNewCattle = () => {
                 type="text"
                 placeholder="Enter Name"
                 className=" bg-background mt-1.5 w-full cursor-pointer text-[14px] text-para rounded-md p-2 border-none"
+                required name="vendorName" value={data.vendorName} onChange={stringInputChangeHandler}
               />
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
+    </>
   );
 };
 

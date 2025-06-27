@@ -22,71 +22,60 @@ const Sidebar = () => {
   const { user }: any = useContextData();
   const [healthDrop, setHealthDrop] = useState(false);
   const [feedDrop, setFeedDrop] = useState(false);
-  const pathName = usePathname()
-  const router=useRouter()
+  const pathName = usePathname();
+  const router = useRouter();
 
-  const isActive = (path:string)=> pathName.startsWith(path)
+  const isActive = (path: string) => pathName.startsWith(path);
+  const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
 
-  const API_URI=process.env.NEXT_PUBLIC_BACKEND_API_URI
-
-  const logoutFuntion=()=> {
-    axios.delete(`${API_URI}/api/auth/logout`,{withCredentials:true}).then(res=>{
-      router.replace('/auth/login-page')
-    }).catch(err=>{
-      toast.error(err.response.data?.message)
-    })
-  }
+  const logoutFuntion = () => {
+    axios
+      .delete(`${API_URI}/api/auth/logout`, { withCredentials: true })
+      .then((res) => {
+        router.replace("/auth/login-page");
+      })
+      .catch((err) => {
+        toast.error(err.response.data?.message);
+      });
+  };
 
   return (
-    <div className="flex flex-col justify-between mx-4 gap-44">
+    <div className="flex flex-col justify-between px-4 gap-44 lg:pt-4 pt-20 bg-[#F6F6F6]">
       <div className="flex flex-col gap-6">
         <Link href="/cattle-management" className="flex items-center gap-2">
-          <Image
-            src={dashboardHomeIcon}
-            alt="homeIcon"
-            width={24}
-            className="h-auto"
-          />
-          <p className={`text-sm font-dmSans ${isActive('/dashboard')?'text-primary':'text-heading'}`}>Dashboard</p>
-        </Link>
-        <Link href="/cattle-management" className="flex items-center gap-1">
-          <Image
-            src={animalManagementIcon}
-            alt="animalManagementIcon"
-            width={24}
-            className="h-auto"
-          />
-          <p className={`text-sm font-dmSans ${isActive('/cattle-management')?'text-primary':'text-heading'}`}>Animal Management</p>
-        </Link>
-        <Link href="/cattle-management" className="flex items-center gap-2">
-          <Image
-            src={milkProduction}
-            alt="milkProduction"
-            width={18}
-            className="h-auto"
-          />
-          <p className={`text-sm font-dmSans ${isActive('/milk-production')?'text-primary':'text-heading'}`}>Milk Production</p>
+          <Image src={dashboardHomeIcon} alt="homeIcon" width={24} className="h-auto" />
+          <p className={`text-sm font-dmSans ${isActive("/dashboard") ? "text-primary" : "text-heading"}`}>
+            Dashboard
+          </p>
         </Link>
 
-        {/*  Health Management */}
+        <Link href="/cattle-management" className="flex items-center gap-1">
+          <Image src={animalManagementIcon} alt="animalManagementIcon" width={24} className="h-auto" />
+          <p className={`text-sm font-dmSans ${isActive("/cattle-management") ? "text-primary" : "text-heading"}`}>
+            Animal Management
+          </p>
+        </Link>
+
+        <Link href="/cattle-management" className="flex items-center gap-2">
+          <Image src={milkProduction} alt="milkProduction" width={18} className="h-auto" />
+          <p className={`text-sm font-dmSans ${isActive("/milk-production") ? "text-primary" : "text-heading"}`}>
+            Milk Production
+          </p>
+        </Link>
+
+        {/* Health Management */}
         <div className="flex items-center gap-8 justify-between">
           <div className="flex gap-1 items-center">
-            <Image
-              src={doctorCheckUps}
-              alt="doctorCheckUpsIcon"
-              width={22}
-              className="h-auto"
-            />
-            <p className="text-sm font-dmSans text-heading">
-              Health Management
-            </p>
+            <Image src={doctorCheckUps} alt="doctorCheckUpsIcon" width={22} className="h-auto" />
+            <p className="text-sm font-dmSans text-heading">Health Management</p>
           </div>
           <div className="cursor-pointer">
             <Image
               src={healthDrop ? updown : dropDown}
               alt="drop-down"
               width={18}
-              className="h-auto" onClick={()=>setHealthDrop(!healthDrop)}
+              className="h-auto"
+              onClick={() => setHealthDrop(!healthDrop)}
             />
           </div>
         </div>
@@ -94,28 +83,22 @@ const Sidebar = () => {
         {healthDrop && (
           <>
             <Link href="/cattle-management" className="flex items-center gap-10 justify-between">
-              <p className={`text-sm font-dmSans pl-5 ${isActive('/cattle-feed-management')?'text-primary':'text-heading'}`}>
+              <p className={`text-sm font-dmSans pl-5 ${isActive("/cattle-feed-management") ? "text-primary" : "text-heading"}`}>
                 Cattle Feed Management
               </p>
             </Link>
-
             <Link href="/cattle-management" className="flex items-center gap-10 justify-between">
-              <p className={`text-sm font-dmSans pl-5 ${isActive('/feed-stock-management')?'text-primary':'text-heading'}`}>
+              <p className={`text-sm font-dmSans pl-5 ${isActive("/feed-stock-management") ? "text-primary" : "text-heading"}`}>
                 Feed Stock Management
               </p>
             </Link>
           </>
         )}
 
-        {/*  Feed Management */}
+        {/* Feed Management */}
         <div className="flex items-center gap-10 justify-between">
           <div className="flex gap-1 items-center">
-            <Image
-              src={feedManagement}
-              alt="doctorCheckUpsIcon"
-              width={24}
-              className="h-auto"
-            />
+            <Image src={feedManagement} alt="doctorCheckUpsIcon" width={24} className="h-auto" />
             <p className="text-sm font-dmSans text-heading">Feed Management</p>
           </div>
           <div>
@@ -124,7 +107,7 @@ const Sidebar = () => {
               alt="drop-down"
               width={18}
               className="h-auto cursor-pointer"
-              onClick={()=>setFeedDrop(!feedDrop)}
+              onClick={() => setFeedDrop(!feedDrop)}
             />
           </div>
         </div>
@@ -132,19 +115,19 @@ const Sidebar = () => {
         {feedDrop && (
           <>
             <Link href="/cattle-management" className="flex items-center gap-10 justify-between">
-              <p className={`text-sm font-dmSans pl-5 ${isActive('/cattle-checkups')?'text-primary':'text-heading'}`}>
+              <p className={`text-sm font-dmSans pl-5 ${isActive("/cattle-checkups") ? "text-primary" : "text-heading"}`}>
                 Cattle Chekups
               </p>
             </Link>
-
             <Link href="/cattle-management" className="flex items-center gap-10 justify-between">
-              <p className={`text-sm font-dmSans pl-5 ${isActive('/feed-vaccine-management')?'text-primary':'text-heading'}`}>
+              <p className={`text-sm font-dmSans pl-5 ${isActive("/feed-vaccine-management") ? "text-primary" : "text-heading"}`}>
                 Feed Vaccine Management
               </p>
             </Link>
           </>
         )}
       </div>
+
       <div className="mb-6">
         <Link href="/cattle-management" className="flex gap-1">
           <Image src={settings} alt="settings" width={24} className="h-auto" />

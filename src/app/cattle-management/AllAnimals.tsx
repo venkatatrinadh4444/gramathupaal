@@ -41,7 +41,7 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
   const router = useRouter()
 
   return (
-    <div className=" rounded-2xl bg-white px-4 py-6">
+    <div className=" rounded-2xl bg-white px-4 py-6 ml-4 lg:ml-0">
       <div className="flex justify-between lg:items-end flex-col lg:flex-row items-start gap-4 lg:gap-0">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
@@ -84,7 +84,7 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
               className="h-auto"
             />
           </div>
-          <div className=" bg-primary text-white flex gap-2 items-center rounded py-1 px-2 justify-center">
+          <div className=" bg-primary cursor-pointer text-white flex gap-2 items-center rounded py-1 px-2 justify-center" onClick={()=>router.push('/cattle-management/add-new-cattle')}>
             <p className="text-lg text-white">+</p>
             <p className="text-sm text-white">Add Cattle</p>
           </div>

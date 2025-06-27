@@ -8,7 +8,6 @@ import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import leftArrow from "@/assets/leftArrow.png";
 import BlockNavigation from "@/app/common/NavigationBlocking";
-import { error } from "console";
 
 const VerifyIdentity = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
@@ -21,8 +20,10 @@ const VerifyIdentity = () => {
   const [loading, setLoading] = useState(false);
 
   // for OTP validation
+
   const length = 6;
   const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
+  const [lastEditableIndex, setLastEditableIndex] = useState(0);
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   //For interval
@@ -42,13 +43,14 @@ const VerifyIdentity = () => {
     if (!/^\d*$/.test(val)) return;
 
     const newOtp = [...otp];
-    newOtp[index] = val.slice(-1); // accept only one digit
+    newOtp[index] = val.slice(-1);
     setOtp(newOtp);
 
-    // Delay focus until after DOM updates
     if (val && index < length - 1) {
+      const nextIndex = index + 1;
+      setLastEditableIndex(nextIndex);
       setTimeout(() => {
-        inputsRef.current[index + 1]?.focus();
+        inputsRef.current[nextIndex]?.focus();
       }, 0);
     }
   };
@@ -58,12 +60,19 @@ const VerifyIdentity = () => {
     index: number
   ) => {
     if (e.key === "Backspace") {
-      if (otp[index]) {
-        const newOtp = [...otp];
+      const newOtp = [...otp];
+
+      if (newOtp[index]) {
         newOtp[index] = "";
         setOtp(newOtp);
+        setLastEditableIndex(index);
       } else if (index > 0) {
-        inputsRef.current[index - 1]?.focus();
+        newOtp[index - 1] = "";
+        setOtp(newOtp);
+        setLastEditableIndex(index - 1);
+        setTimeout(() => {
+          inputsRef.current[index - 1]?.focus();
+        }, 0);
       }
     }
   };
@@ -79,7 +88,10 @@ const VerifyIdentity = () => {
     });
 
     setOtp(newOtp);
-    inputsRef.current[pasteData.length - 1]?.focus();
+    setLastEditableIndex(pasteData.length - 1);
+    setTimeout(() => {
+      inputsRef.current[pasteData.length - 1]?.focus();
+    }, 0);
   };
 
   // form submit
@@ -88,9 +100,6 @@ const VerifyIdentity = () => {
     e.preventDefault();
     if (loading) {
       return;
-    }
-    if(otp.length===6) {
-      return toast.error('Please enter all field values')
     }
     setLoading(true);
     axios
@@ -121,6 +130,9 @@ const VerifyIdentity = () => {
   };
 
   const resendOTP = () => {
+    if (seconds !== 0) {
+      return null;
+    }
     startInterval();
     axios
       .post(`${API_URI}/api/user/send-otp`, { email })
@@ -141,9 +153,7 @@ const VerifyIdentity = () => {
     startInterval();
   }, []);
 
-  console.log(seconds);
   // Modal section
-
   useEffect(() => {
     if (modalRef.current) {
       modalInstance.current = new Modal(modalRef.current);
@@ -185,7 +195,7 @@ const VerifyIdentity = () => {
             </label>
             <div className="flex justify-center gap-3 mt-2">
               {otp.map((digit, index) => {
-                const isDisabled = index > 0 && otp[index - 1] === "";
+                const isDisabled = index !== lastEditableIndex;
 
                 return (
                   <input
@@ -196,34 +206,34 @@ const VerifyIdentity = () => {
                     onChange={(e) => handleChange(e, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
                     onPaste={handlePaste}
-                    ref={(el) => {
-                      (inputsRef.current[index] = el)
-                    }}
+                    ref={(el) => {(inputsRef.current[index] = el)}}
                     inputMode="numeric"
                     disabled={isDisabled}
-                    className={`md:w-[52px] sm:w-14 w-12 h-12 text-center rounded focus:outline-none border-none focus:ring-2 focus:ring-blue-500 ${
-                      isDisabled ? "bg-gray-100 cursor-not-allowed" : "bg-gray-100"
+                    className={`w-12 h-12 text-center rounded focus:outline-none border-none focus:ring-2 focus:ring-blue-500 ${
+                      isDisabled ? "bg-gray-200 cursor-not-allowed" : "bg-white"
                     }`}
                   />
                 );
               })}
             </div>
-            <p
-              className="text-[16px] text-primary text-end cursor-pointer mr-1"
-              onClick={resendOTP}
-            >
-              {seconds === 0 ? (
-                "Resend OTP"
-              ) : (
-                <>
-                  wait <span className="text-[14px]">{seconds}</span> seconds
-                </>
-              )}
-            </p>
+            {seconds === 0 ? (
+              <p
+                className="text-[16px] text-primary text-end cursor-pointer mr-1"
+                onClick={resendOTP}
+              >
+                {" "}
+                Resend OTP
+              </p>
+            ) : (
+              <p className="text-[16px] text-primary text-end cursor-pointer mr-1">
+                wait <span className="text-[14px]"> {seconds} </span> seconds
+              </p>
+            )}
           </div>
           <button
-            className="bg-grey-btn text-white w-full py-3 text-sm rounded-lg mt-8"
+            className={`bg-grey-btn text-white w-full py-3 text-sm rounded-lg mt-8 disabled:bg-gray-500`}
             type="submit"
+            disabled={otp.join("")?.length !== 6 ? true : false}
           >
             Verify
           </button>
