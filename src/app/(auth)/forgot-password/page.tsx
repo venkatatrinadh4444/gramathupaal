@@ -27,7 +27,7 @@ const ForgotPage = () => {
       .post(`${API_URI}/api/user/send-otp`, { email })
       .then((res) => {
         toast.success(res.data.message);
-        router.push(`/auth/forgot-password/${email}`);
+        router.push(`/forgot-password/${email}`);
       })
       .catch((err) => toast.error(err.response.data?.message))
       .finally(() => setLoading(false));
@@ -92,15 +92,15 @@ const ForgotPage = () => {
             />
             <p
               className="text-sm text-neutral-600"
-              onClick={() => router.push("/auth/login-page")}
+              onClick={() => router.push("/login")}
             >
               Go back
             </p>
           </div>
           <div>
             <p
-              className="text-sm underline text-green-400 cursor-pointer"
-              onClick={() => router.push("/auth/login-page")}
+              className="text-sm underline text-primary cursor-pointer"
+              onClick={() => router.push("/login")}
             >
               Login
             </p>

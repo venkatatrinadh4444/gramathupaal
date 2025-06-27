@@ -31,7 +31,7 @@ const Navbar = () => {
 
       {/* Mobile Sidebar with Animation */}
       <div
-        className={`fixed top-0 left-0 h-full w-[75%] max-w-[320px] z-40 bg-white shadow-md transition-transform duration-500 ease-in-out transform ${
+        className={`fixed top-0 left-0 h-full w-[75%] max-w-[320px] z-40 bg-[#F6F6F6] shadow-md transition-transform duration-500 ease-in-out transform ${
           isShow ? 'translate-x-0' : '-translate-x-full'
         } lg:hidden`}
       >

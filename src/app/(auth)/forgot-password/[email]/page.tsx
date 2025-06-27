@@ -106,7 +106,7 @@ const VerifyIdentity = () => {
       .post(`${API_URI}/api/user/verify-otp`, { email, otp: enteredOTP })
       .then((res) => {
         toast.success(res.data.message);
-        router.push(`/auth/forgot-password/${email}/set-new-password`);
+        router.push(`/forgot-password/${email}/set-new-password`);
       })
       .catch((err) => toast.error(err.response.data?.message))
       .finally(() => {
@@ -253,7 +253,7 @@ const VerifyIdentity = () => {
           <div>
             <p
               className="text-sm underline text-green-400 cursor-pointer"
-              onClick={() => router.push("/auth/login-page")}
+              onClick={() => router.push("/login")}
             >
               Login
             </p>
@@ -314,7 +314,7 @@ const VerifyIdentity = () => {
               <button
                 type="button"
                 className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
-                onClick={() => router.push("/auth/forgot-password")}
+                onClick={() => router.push("/forgot-password")}
               >
                 {"Yes, I'm sure"}
               </button>

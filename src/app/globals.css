@@ -12,13 +12,24 @@
 ::-webkit-scrollbar {
     @apply hidden;
 }
-
+/* cattle-management overview page */
 @media screen and (max-width:630px) {
     .cattle-management-options {
         flex-direction: column;
         width: 100% !important;
     }
     .cattle-management-options div {
+        width: 100%;
+    }
+}
+
+/* milk-production-overview page */
+@media screen and (max-width:1300px) {
+    .milk-production-options {
+        flex-direction: column;
+        width: 100% !important;
+    }
+    .milk-production-options div {
         width: 100%;
     }
 }

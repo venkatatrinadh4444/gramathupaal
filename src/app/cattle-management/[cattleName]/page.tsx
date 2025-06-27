@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import FeedHistory from "./components/FeedHistory";
 import ClafHistory from "./components/ClafHistory";
 import MilkHistory from "./components/MilkHistory";
+import VaccinationHistory from "./components/VaccinationHistory";
 
 const AnimalDetailPage = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
@@ -23,6 +24,7 @@ const AnimalDetailPage = () => {
   const [showFeedHistory, setShowFeedHistory] = useState(false);
   const [showClafHistory, setShowClafHistory] = useState(false);
   const [showMilkHistory, setShowMilkHistory] = useState(false);
+  const [showVaccinationHistory, setShowVaccinationHistory] = useState(false);
 
   const params = useParams();
   const { cattleName } = params;
@@ -35,13 +37,13 @@ const AnimalDetailPage = () => {
       .then((res) => {
         setCattleDetails(res.data.animalDetails);
       })
-      .catch((err) => toast.error(err.response?.data?.message));
+      .catch(() => router.push('/auth/login-page'));
   }, [cattleName, API_URI]);
 
   return (
     <>
       <ToastContainer />
-      <div className="flex-1 rounded-2xl bg-white px-4 py-6 mx-4 mb-6">
+      <div className="flex-1 rounded-2xl bg-white px-4 py-6 mx-4 my-4">
         <div className="flex justify-between md:items-end flex-col md:flex-row">
           <div>
             <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
@@ -81,7 +83,8 @@ const AnimalDetailPage = () => {
               cattleDetails={cattleDetails}
               onOpenFeed={() => setShowFeedHistory(true)}
               onOpenClafHistory={() => setShowClafHistory(true)}
-              onOpenMilkHistory={()=>setShowMilkHistory(true)}
+              onOpenMilkHistory={() => setShowMilkHistory(true)}
+              onOpenVaccinationHistory={()=>setShowVaccinationHistory(true)}
             />
           )}
           {cattleDetails?.cattleDetails?.cattleName && (
@@ -92,18 +95,36 @@ const AnimalDetailPage = () => {
           {/* FeedHistory popup overlay */}
           {showFeedHistory && (
             <div className="fixed inset-0 z-50 bg-white bg-opacity-40 flex items-center justify-center">
-              <FeedHistory onCloseFeed={() => setShowFeedHistory(false)} cattleName={cattleName} />
+              <FeedHistory
+                onCloseFeed={() => setShowFeedHistory(false)}
+                cattleName={cattleName}
+              />
             </div>
           )}
           {showClafHistory && (
             <div className="fixed inset-0 z-50 bg-white bg-opacity-50 flex items-center justify-center">
-              <ClafHistory onCloseFeed={() => setShowClafHistory(false)} />
+              <ClafHistory
+                onCloseFeed={() => setShowClafHistory(false)}
+                cattleName={cattleName}
+              />
             </div>
           )}
 
           {showMilkHistory && (
             <div className="fixed inset-0 z-50 bg-white bg-opacity-50 flex items-center justify-center">
-              <MilkHistory onCloseFeed={() => setShowMilkHistory(false)}  />
+              <MilkHistory
+                onCloseFeed={() => setShowMilkHistory(false)}
+                cattleName={cattleName}
+              />
+            </div>
+          )}
+
+          {showVaccinationHistory && (
+            <div className="fixed inset-0 z-50 bg-white bg-opacity-50 flex items-center justify-center">
+              <VaccinationHistory
+                onCloseFeed={() => setShowVaccinationHistory(false)}
+                cattleName={cattleName}
+              />
             </div>
           )}
         </div>

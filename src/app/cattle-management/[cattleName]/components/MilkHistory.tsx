@@ -3,8 +3,17 @@
 import Image from "next/image";
 import plus from "@/assets/plus.png";
 import cross from "@/assets/cross-dark.png";
+import { useState , useEffect } from "react";
+import axios from "axios";
 
-const MilkHistory = ({ onCloseFeed }: { onCloseFeed: () => void }) => {
+const MilkHistory = ({ onCloseFeed , cattleName }: { onCloseFeed: () => void , cattleName:any }) => {
+  const API_URI=process.env.NEXT_PUBLIC_BACKEND_API_URI
+  const [data,setData]=useState([])
+
+  useEffect(()=>{
+    axios.get(`${API_URI}/api/dashboard/animal/milk-history/${cattleName}`,{withCredentials:true}).then(res=>console.log(res)).catch(err=>console.log(err))
+  },[])
+
   return (
     <>
       <div className="bg-white rounded-2xl p-8 shadow-md">

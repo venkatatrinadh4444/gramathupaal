@@ -10,7 +10,7 @@ import feedDetails from "@/assets/feed-details.png";
 import pregencies from "@/assets/pregencies.png";
 import { format, parseISO } from "date-fns";
 
-const LeftSide = ({ cattleDetails , onOpenFeed , onOpenClafHistory , onOpenMilkHistory }: { cattleDetails: any , onOpenFeed:()=>void , onOpenClafHistory: ()=>void , onOpenMilkHistory:()=>void }) => {
+const LeftSide = ({ cattleDetails , onOpenFeed , onOpenClafHistory , onOpenMilkHistory , onOpenVaccinationHistory }: { cattleDetails: any , onOpenFeed:()=>void , onOpenClafHistory: ()=>void , onOpenMilkHistory:()=>void , onOpenVaccinationHistory:()=>void }) => {
   const images: string[] = [];
   images.push(cattleDetails?.cattleDetails?.image1);
   images.push(cattleDetails?.cattleDetails?.image2);
@@ -47,7 +47,7 @@ const LeftSide = ({ cattleDetails , onOpenFeed , onOpenClafHistory , onOpenMilkH
           <h1 className="font-[600] font-dmSans text-[#4A4A4A] text-[20px] mt-2">
           {cattleDetails?.lastVaccination ? format(parseISO(cattleDetails?.lastVaccination),"MMM dd, yyyy") :"MMM dd, yyyy"}
           </h1>
-          <p className="text-sm text-primary flex gap-1 items-center cursor-pointer">
+          <p className="text-sm text-primary flex gap-1 items-center cursor-pointer" onClick={onOpenVaccinationHistory}>
             Last Vaccination
             <Image src={greaterthan} alt="right" className="w-[18px] h-auto" />
           </p>

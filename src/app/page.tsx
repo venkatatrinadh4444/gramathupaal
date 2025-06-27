@@ -5,7 +5,7 @@ const App=async ()=> {
   const API_URI=process.env.NEXT_PUBLIC_BACKEND_API_URI
   const token=(await cookies()).get('user_token')
   if(!token) {
-    redirect('/auth/login-page')
+    redirect('/login')
   }
   const response=await fetch(`${API_URI}/api/user/profile`,{
     headers:{
@@ -16,7 +16,7 @@ const App=async ()=> {
     redirect('/cattle-management')
   }
   if(!data?.user.email) {
-    redirect('/auth/login-page')
+    redirect('/login')
   }
 }
 

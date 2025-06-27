@@ -47,7 +47,7 @@ const NewPasswordPage = () => {
       .put(`${API_URI}/api/user/reset-password`, { email, password })
       .then((res) => {
         toast.success(res.data.message);
-        router.push('/auth/login-page')
+        router.push('/login')
       })
       .catch((err) => toast.error(err.response.data?.message));
   };
@@ -217,7 +217,7 @@ const NewPasswordPage = () => {
               <button
                 type="button"
                 className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
-                onClick={() => router.push('/auth/forgot-password')}
+                onClick={() => router.push('/forgot-password')}
               >
                 {"Yes, I'm sure"}
               </button>

@@ -8,8 +8,10 @@ import imageUpload from "@/assets/image-upload.png";
 import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const AddNewCattle = () => {
+  const router=useRouter()
 
   const API_URI=process.env.NEXT_PUBLIC_BACKEND_API_URI
 
@@ -103,7 +105,7 @@ const AddNewCattle = () => {
   return (
     <>
     <ToastContainer/>
-    <form className="flex-1 rounded-2xl bg-white px-4 py-6 mr-4 mb-6" onSubmit={sumbitHandler}>
+    <form className="flex-1 rounded-2xl bg-white px-4 py-6 mx-4 my-4" onSubmit={sumbitHandler}>
       <div className="flex justify-between lg:items-end flex-col lg:flex-row items-start gap-4 lg:gap-0">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
@@ -112,17 +114,17 @@ const AddNewCattle = () => {
           <div className="flex gap-2 items-center">
             <p className="text-[#A4A4A4] text-[16px]">Dashboard</p>
             <Image src={arrow} alt="arrow" className="w-4 h-auto" />
-            <p className="text-[#A4A4A4] text-[16px]">Cattle Management</p>
+            <p className="text-[#A4A4A4] text-[16px] hover:text-primary cursor-pointer" onClick={()=>router.push('/cattle-management')}>Cattle Management</p>
             <Image src={arrow} alt="arrow" className="w-4 h-auto" />
             <p className="text-primary text-[16px]">Add New Cattle</p>
           </div>
         </div>
         <div className="flex gap-2 ml-auto">
-          <div className="bg-[#4A4A4A] rounded flex items-center px-2 cursor-pointer">
+          <div className="bg-[#4A4A4A] rounded flex items-center px-2 cursor-pointer" onClick={()=>router.push('/cattle-management')}>
             <Image src={cross} alt="cross" className="w-[18px] h-auto" />
           </div>
           <label htmlFor="submitBtn" className="bg-primary px-2 py-2 rounded flex gap-1 items-center text-white cursor-pointer">
-            <Image src={tick} alt="cross" className="w-[18px] h-auto" />
+            <Image src={tick} alt="cross" className="w-[18px] h-auto"/>
             <p>Save Information</p>
             <input type="submit" id="submitBtn" className="hidden"/>
           </label>

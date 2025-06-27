@@ -12,47 +12,24 @@ import lowerExceptFirst from "../common/lowerExceptFirst";
 import { useRouter } from "next/navigation";
 import rightClick from "@/assets/pagination-right.png";
 import leftClick from "@/assets/pagination-left.png";
+import search from "@/assets/search.png";
 
-type Animal = {
-  id: number;
-  cattleName: string;
-  healthStatus: string;
-  type: string;
-  weight: number;
-  active: true;
-  snf: string;
-  image1: string;
-  image2: string;
-  fatherInsemination: string;
-  parent: string;
-  breed: string;
-  birthDate: string;
-  farmEntryDate: string;
-  purchaseAmount: string;
-  vendorName: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: number;
-  averageMilk: number;
-};
-
-const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
-
-  const [animalsData, setAnimalData] = useState(allAnimalDetails);
+const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
+  const [allRecords, setAllRecords] = useState(allMilkRecords);
 
   const router = useRouter();
 
- /*  Pagination Logic */
-  const pageSize = 2;
+  /* Handling Pagination */
+  const pageSize = 25;
 
   const [page, setPage] = useState(1);
 
-  const totalPages = Math.ceil(allAnimalDetails?.length / pageSize);
+  const totalPages = Math.ceil(allMilkRecords?.length / pageSize);
   const startIndex = (page - 1) * pageSize;
   const endIndex = startIndex + pageSize;
 
   const handleNext = () => {
-    if (endIndex < allAnimalDetails?.length) {
+    if (endIndex < allMilkRecords?.length) {
       setPage(page + 1);
     }
   };
@@ -98,26 +75,40 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
     return rangeWithDots;
   };
 
-  useEffect(()=>{
-    const slicedData = allAnimalDetails?.slice(startIndex, endIndex);
-    setAnimalData(slicedData)
-  },[page])
+  useEffect(() => {
+    const slicedData = allMilkRecords?.slice(startIndex, endIndex);
+    setAllRecords(slicedData);
+  }, [page]);
 
   return (
     <div className=" rounded-2xl bg-white px-4 py-6 mx-4 my-4">
-      <div className="flex justify-between lg:items-end flex-col lg:flex-row items-start gap-4 lg:gap-0">
+      <div className="flex justify-between xxl:items-end flex-col xxl:flex-row items-start gap-4 xxl:gap-0">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
-            Cattle Management
+            Milk Production Record
           </h1>
           <div className="flex gap-2 items-center">
             <p className="text-[#A4A4A4] text-[16px]">Dashboard</p>
             <Image src={arrow} alt="arrow" className="w-4 h-auto" />
-            <p className="text-primary text-[16px]">Cattle Management</p>
+            <p className="text-primary text-[16px]">Milk Production Record</p>
           </div>
         </div>
-        <div className="flex gap-2 items-end cattle-management-options">
-          <div className="border border-gray-300 flex gap-2 items-center rounded py-2 px-1 justify-between">
+        <div className="flex gap-3 items-end milk-production-options">
+          <div className="border border-gray-300 flex gap-2 items-center rounded-lg py-0.5 px-2 justify-between">
+            <input
+              type="text"
+              placeholder="Search ID"
+              className="border-none text-para text-sm w-full"
+            />
+            <Image
+              src={search}
+              alt="sort-image"
+              width={18}
+              className="h-auto"
+            />
+          </div>
+
+          <div className="border border-gray-300 flex gap-2 items-center rounded-lg py-2.5 px-2 justify-between">
             <Image
               src={sortByImg}
               alt="sort-image"
@@ -132,7 +123,7 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
               className="h-auto"
             />
           </div>
-          <div className="flex gap-2 items-center rounded py-2 px-1 bg-[#4A4A4A] text-white justify-between">
+          <div className="flex gap-2 items-center rounded-lg py-2.5 px-2 bg-[#4A4A4A] text-white justify-between">
             <Image
               src={filterImg}
               alt="sort-image"
@@ -148,7 +139,7 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
             />
           </div>
           <div
-            className=" bg-primary cursor-pointer text-white flex gap-2 items-center rounded py-1 px-2 justify-center"
+            className=" bg-primary cursor-pointer text-white flex gap-2 items-center rounded-lg py-1.5 px-2 justify-center"
             onClick={() => router.push("/cattle-management/add-new-cattle")}
           >
             <p className="text-lg text-white">+</p>
@@ -161,100 +152,97 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
       <div className="mt-6 overflow-x-auto">
         <div className="min-w-[900px] w-full">
           {/* Heading row */}
-          <div className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap font-[500]  rounded-xl">
+          <div className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-[#4A4A4A] text-[16px] whitespace-nowrap font-[500] gap-3 rounded-xl">
             <p></p>
             <p>Cattle Type</p>
             <p>Cattle ID</p>
-            <p>Farm Entry Date</p>
-            <p>Breed</p>
-            <p>Health Status</p>
-            <p>Weight</p>
-            <p>Average Milk</p>
+            <p>Date</p>
+            <p>Morning Milk</p>
+            <p>Afternoon Milk</p>
+            <p>Evening Milk</p>
+            <p>Milk Grade</p>
             <p></p>
           </div>
 
           {/* Data row */}
 
-          {animalsData?.length > 0 &&
-            animalsData?.map((eachAnimal) => {
+          {allRecords?.length > 0 &&
+            allRecords?.map((eachRecord: any) => {
               return (
-                <div key={eachAnimal.id}>
-                <div
-                  className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center"
-                  key={eachAnimal.id}
-                >
-                  <div className="w-10 h-10 rounded-[50%]overflow-hidden flex object-cover">
-                    <Image
-                      src={eachAnimal.image1}
-                      width={100}
-                      height={100}
-                      alt="image1"
-                      className="object-cover rounded-[50%]"
-                    />
-                  </div>
-
-                  <p className="text-[#4A4A4A] ">
-                    {lowerExceptFirst(eachAnimal.type)}
-                  </p>
-                  <p className="text-[#4A4A4A]">
-                    {"#" + eachAnimal.cattleName}
-                  </p>
-                  <p className="text-[#4A4A4A] ">
-                    {format(parseISO(eachAnimal.birthDate), "MMM dd, yyyy")}
-                  </p>
-                  <p className="text-[#4A4A4A] ">
-                    {lowerExceptFirst(eachAnimal.breed)}
-                  </p>
-                  <p className="pl-2">
-                    <span
-                      className={`text-[12px] rounded-full w-fit px-4 py-2 ${
-                        eachAnimal.healthStatus === "HEALTHY"
-                          ? "bg-[#1D9A6C] text-white"
-                          : "bg-[#FBC02D] text-black"
-                      }`}
-                    >
-                      {lowerExceptFirst(eachAnimal.healthStatus)}
-                    </span>
-                  </p>
-
-                  <p className="text-[#4A4A4A] ">{eachAnimal.weight}</p>
-                  <div className="flex items-center ">
-                    <p className="text-[#4A4A4A]">
-                      {eachAnimal?.averageMilk?.toString().slice(0, 4)}
-                    </p>
-                    <p className="text-green-600 text-xs">+18.3%</p>
-                  </div>
+                <div key={eachRecord.id}>
                   <div
-                    className="flex justify-center"
-                    onClick={() =>
-                      router.push(`cattle-management/${eachAnimal.cattleName}`)
-                    }
+                    className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] gap-2 whitespace-nowrap items-center"
+                    key={eachRecord.id}
                   >
-                    <button className="bg-[#0E9347] rounded px-1 py-1">
+                    <div className="w-10 h-10 rounded-[50%]overflow-hidden flex object-cover">
                       <Image
-                        src={rowDataArrow}
-                        alt="arrow"
-                        width={18}
-                        height={18}
+                        src={eachRecord?.cattle?.image1}
+                        width={100}
+                        height={100}
+                        alt="image1"
+                        className="object-cover rounded-[50%]"
                       />
-                    </button>
+                    </div>
+
+                    <p className="text-[#4A4A4A]">
+                      {lowerExceptFirst(eachRecord?.cattle?.type)}
+                    </p>
+                    <p className="text-[#4A4A4A]">
+                      {"#" + eachRecord?.cattle?.cattleName}
+                    </p>
+                    <p className="text-[#4A4A4A] ">
+                      {format(parseISO(eachRecord.date), "MMM dd, yyyy")}
+                    </p>
+                    <p className="text-[#4A4A4A] text-center ">
+                      {lowerExceptFirst(eachRecord.morningMilk)}
+                    </p>
+                    <p className="text-[#4A4A4A] text-center">
+                      {lowerExceptFirst(eachRecord.afternoonMilk)}
+                    </p>
+
+                    <p className="text-[#4A4A4A] text-center">
+                      {eachRecord.eveningMilk}
+                    </p>
+
+                    <p className="text-[#4A4A4A] text-center">
+                      {eachRecord.milkGrade}
+                    </p>
+
+                    <div
+                      className="flex justify-center"
+                      onClick={() =>
+                        router.push(
+                          `cattle-management/${eachRecord?.cattle?.cattleName}`
+                        )
+                      }
+                    >
+                      <button className="bg-[#0E9347] rounded px-1 py-1">
+                        <Image
+                          src={rowDataArrow}
+                          alt="arrow"
+                          width={18}
+                          height={18}
+                        />
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <hr/>
+                  <hr />
                 </div>
               );
             })}
         </div>
       </div>
 
-     {/*  Pagination */}
+      {/*  Pagination */}
       <div className="flex justify-between items-center mt-3">
-        <p className="text-sm">Showing 1 to 25 of {animalsData.length} entries</p>
+        <p className="text-sm">
+          Showing 1 to 25 of {allRecords.length} entries
+        </p>
         <div className="flex items-center gap-5">
           <button
             onClick={handlePrev}
             className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:border-none"
-            
+            disabled={page === 1}
           >
             <Image src={leftClick} alt="left" className="w-[8px] h-auto" />
           </button>
@@ -285,6 +273,7 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
           <button
             onClick={handleNext}
             className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:border-none"
+            disabled={endIndex >= allMilkRecords?.length}
           >
             <Image src={rightClick} alt="left" className="w-[8px] h-auto" />
           </button>
@@ -294,4 +283,4 @@ const AllAnimals = ({ allAnimalDetails }: { allAnimalDetails: Animal[] }) => {
   );
 };
 
-export default AllAnimals;
+export default AllMilkRecords;

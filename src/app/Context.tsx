@@ -12,7 +12,7 @@ export const UserContextProvider=({children}:{children:React.ReactNode})=> {
     const [user,setUser]=useState({})
 
     const fetchUser=()=> {
-        axios.get(`${API_URI}/api/user/profile`,{withCredentials:true}).then(res=>setUser(res.data.user)).catch(()=>router.push('/auth/login-page'))
+        axios.get(`${API_URI}/api/user/profile`,{withCredentials:true}).then(res=>setUser(res.data.user)).catch(()=>router.push('/login'))
     }
 
     useEffect(()=>{

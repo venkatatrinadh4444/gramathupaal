@@ -111,7 +111,7 @@ const LoginPage = () => {
             </div>
             <p
               className="text-sm text-neutral-600 text-end  cursor-pointer"
-              onClick={() => router.replace("/auth/forgot-password")}
+              onClick={() => router.replace("/forgot-password")}
             >
               Forgot Password
             </p>

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import Navbar from "./Navbar";
-import Sidebar from "./SideBar";
+import Navbar from "../cattle-management/Navbar";
+import Sidebar from "../cattle-management/SideBar";
 
 export const metadata: Metadata = {
   title: "cattle-management home page",
@@ -21,7 +21,7 @@ export default function CattleRootLayout({
 
       <div className="flex pt-[60px]">
         {/* Fixed Sidebar on lg+ */}
-        <div className="hidden lg:block fixed top-[60px] left-0 h-[calc(100vh-60px)] w-[280px] z-30 bg-[#F6F6F6]">
+        <div className="hidden lg:block fixed top-[60px] left-0 h-[calc(100vh-60px)] w-[280px] bg-[#F6F6F6] z-30">
           <Sidebar />
         </div>
 
@@ -33,35 +33,3 @@ export default function CattleRootLayout({
     </div>
   );
 }
-
-
-
-
-/* 
-
-import { Metadata } from "next";
-import Navbar from "./Navbar";
-import Sidebar from "./SideBar";
-
-export const metadata: Metadata = {
-  title: "cattle-management home page",
-  description: "Shows all the list of cattles",
-};
-
-export default function CattleRootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-[#F6F6F6] min-h-[100vh]">
-      <Navbar />
-      <div className="flex mt-6">
-        <div className="hidden lg:block">
-        <Sidebar />
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}  */

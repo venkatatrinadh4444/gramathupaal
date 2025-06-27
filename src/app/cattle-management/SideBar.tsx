@@ -32,7 +32,7 @@ const Sidebar = () => {
     axios
       .delete(`${API_URI}/api/auth/logout`, { withCredentials: true })
       .then((res) => {
-        router.replace("/auth/login-page");
+        router.replace("/login");
       })
       .catch((err) => {
         toast.error(err.response.data?.message);
@@ -40,7 +40,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex flex-col justify-between px-4 gap-44 lg:pt-4 pt-20 bg-[#F6F6F6]">
+    <div className="flex flex-col justify-between px-4 gap-44 lg:pt-4 pt-20">
       <div className="flex flex-col gap-6">
         <Link href="/cattle-management" className="flex items-center gap-2">
           <Image src={dashboardHomeIcon} alt="homeIcon" width={24} className="h-auto" />
@@ -64,7 +64,7 @@ const Sidebar = () => {
         </Link>
 
         {/* Health Management */}
-        <div className="flex items-center gap-8 justify-between">
+        <div className="flex items-center gap-8 justify-between cursor-pointer" onClick={()=>setHealthDrop(!healthDrop)}>
           <div className="flex gap-1 items-center">
             <Image src={doctorCheckUps} alt="doctorCheckUpsIcon" width={22} className="h-auto" />
             <p className="text-sm font-dmSans text-heading">Health Management</p>
@@ -96,7 +96,7 @@ const Sidebar = () => {
         )}
 
         {/* Feed Management */}
-        <div className="flex items-center gap-10 justify-between">
+        <div className="flex items-center gap-10 justify-between cursor-pointer" onClick={()=>setFeedDrop(!feedDrop)}>
           <div className="flex gap-1 items-center">
             <Image src={feedManagement} alt="doctorCheckUpsIcon" width={24} className="h-auto" />
             <p className="text-sm font-dmSans text-heading">Feed Management</p>
