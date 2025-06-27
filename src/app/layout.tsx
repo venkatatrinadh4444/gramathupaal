@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   description:
     "Designed to handle all the records for Buffalo,Goat,Cow Records",
   icons:{
-    icon:'/public/favicon.svg'
+    icon:'/favicon.svg'
   }
 };
 
