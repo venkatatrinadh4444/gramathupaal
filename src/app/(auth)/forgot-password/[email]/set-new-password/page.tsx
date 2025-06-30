@@ -46,10 +46,10 @@ const NewPasswordPage = () => {
     axios
       .put(`${API_URI}/api/user/reset-password`, { email, password })
       .then((res) => {
-        toast.success(res.data.message);
+        toast.success(res?.data?.message);
         router.push('/login')
       })
-      .catch((err) => toast.error(err.response.data?.message));
+      .catch((err) => toast.error(err?.response?.data?.message));
   };
 
   // Tailwind modal
@@ -72,7 +72,7 @@ const NewPasswordPage = () => {
 
   return (
     <>
-      <ToastContainer />
+
       <BlockNavigation/>
       <div>
         <h1 className="text-[24px] font-[600] text-primary text-center my-3">
@@ -232,6 +232,7 @@ const NewPasswordPage = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };

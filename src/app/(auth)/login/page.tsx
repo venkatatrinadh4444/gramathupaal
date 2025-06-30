@@ -40,10 +40,12 @@ const LoginPage = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        toast.success(res.data.message);
-        router.push('/cattle-management')
+        toast.success(res?.data?.message);
+        setTimeout(()=>{
+          router.push('/cattle-management')
+        },2000)
       })
-      .catch((err) => toast.error( err.response?.data?.message ))
+      .catch((err) => toast.error( err?.response?.data?.message ))
       .finally(() => {
         setLoading(false);
       });
@@ -110,7 +112,7 @@ const LoginPage = () => {
               />
             </div>
             <p
-              className="text-sm text-neutral-600 text-end  cursor-pointer"
+              className="text-sm text-neutral-600 text-end  cursor-pointer mt-1"
               onClick={() => router.replace("/forgot-password")}
             >
               Forgot Password

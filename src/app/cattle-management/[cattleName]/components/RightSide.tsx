@@ -41,7 +41,7 @@ const RightSide = ({cattleDetails}:any) => {
           </div>
         </div>
       </div>
-      <hr />
+      <hr className="border border-para opacity-20 rounded-lg" />
       {/* Breed Info */}
       <div className="my-8">
         <h1 className="text-primary font-dmSans text-[20px] font-[600]">
@@ -50,7 +50,7 @@ const RightSide = ({cattleDetails}:any) => {
         <p className="text-para text-[16px]">
           Related to cattle’s family or insemination
         </p>
-        <div className="flex justify-between mt-3">
+        <div className="flex gap-20 mt-3">
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">
               Father Insemination
@@ -68,8 +68,8 @@ const RightSide = ({cattleDetails}:any) => {
         </div>
       </div>
 
-      <hr />
-      <div className="flex justify-between mt-4 flex-col xxl:flex-row gap-3 xxl:gap-0">
+      <hr className="border border-para opacity-20 rounded-lg" />
+      <div className="flex mt-4 flex-col xxl:flex-row gap-4 xxl:gap-16">
         {/* Dates */}
         <div>
           <h1 className="text-primary font-dmSans text-[20px] font-[600]">

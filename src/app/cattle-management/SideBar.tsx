@@ -35,12 +35,12 @@ const Sidebar = () => {
         router.replace("/login");
       })
       .catch((err) => {
-        toast.error(err.response.data?.message);
+        toast.error(err?.response?.data?.message);
       });
   };
 
   return (
-    <div className="flex flex-col justify-between px-4 gap-44 lg:pt-4 pt-20">
+    <div className="flex flex-col px-4 gap-44 lg:pt-4 pt-20 justify-between h-[90vh]">
       <div className="flex flex-col gap-6">
         <Link href="/cattle-management" className="flex items-center gap-2">
           <Image src={dashboardHomeIcon} alt="homeIcon" width={24} className="h-auto" />

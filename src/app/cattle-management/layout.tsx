@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Navbar from "./Navbar";
 import Sidebar from "./SideBar";
+import BlockNavigation from "../common/NavigationBlocking";
 
 export const metadata: Metadata = {
   title: "cattle-management home page",
@@ -13,6 +14,8 @@ export default function CattleRootLayout({
   children: React.ReactNode;
 }) {
   return (
+    <>
+    <BlockNavigation/>
     <div className="bg-[#F6F6F6] h-screen overflow-hidden">
       {/* Fixed Navbar */}
       <div className="fixed top-0 left-0 right-0 z-40">
@@ -31,6 +34,7 @@ export default function CattleRootLayout({
         </main>
       </div>
     </div>
+    </>
   );
 }
 

@@ -33,3 +33,27 @@
         width: 100%;
     }
 }
+
+@media screen and (max-width:1150px) {
+    .feed-and-calf-options {
+        flex-direction: column;
+        gap: 5px;
+        align-items: start;
+    }
+}
+
+@media screen and (max-width:1250px) {
+    .milk-history-options {
+        flex-direction: column;
+        gap: 5px;
+        align-items: start;
+    }
+}
+
+@media screen and (max-width:1350px) {
+    .vaccination-history-options {
+        flex-direction: column;
+        gap: 5px;
+        align-items: start;
+    }
+}

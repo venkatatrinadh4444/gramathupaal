@@ -26,10 +26,10 @@ const ForgotPage = () => {
     axios
       .post(`${API_URI}/api/user/send-otp`, { email })
       .then((res) => {
-        toast.success(res.data.message);
+        toast.success(res?.data?.message);
         router.push(`/forgot-password/${email}`);
       })
-      .catch((err) => toast.error(err.response.data?.message))
+      .catch((err) => toast.error(err?.response?.data?.message))
       .finally(() => setLoading(false));
   };
 

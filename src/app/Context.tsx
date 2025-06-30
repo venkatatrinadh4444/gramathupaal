@@ -18,6 +18,16 @@ export const UserContextProvider=({children}:{children:React.ReactNode})=> {
     useEffect(()=>{
         fetchUser()
     },[])
+
+    useEffect(()=>{
+        const intervalId=setInterval(()=>{
+            axios.get(`${API_URI}/api/user/profile`,{withCredentials:true}).then().catch(()=>router.replace('/login'))
+        },5*60*1000)
+        return ()=>clearInterval(intervalId)
+    },[])
+
+
+
     return (
         <UserContext.Provider value={{user,setUser}}>
             {children}

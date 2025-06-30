@@ -14,8 +14,8 @@ const MilkProduction = () => {
       .get(`${API_URI}/api/dashboard/milk/all-milk-records`, {
         withCredentials: true,
       })
-      .then((res) => setAllMilkRecords(res.data.allRecords))
-      .catch((err) => toast.error(err.response.data?.message));
+      .then((res) => setAllMilkRecords(res?.data?.allRecords))
+      .catch((err) => toast.error(err?.response?.data?.message));
   }, []);
 
 

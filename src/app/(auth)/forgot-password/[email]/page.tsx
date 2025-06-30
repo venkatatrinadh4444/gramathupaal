@@ -209,8 +209,8 @@ const VerifyIdentity = () => {
                     ref={(el) => {(inputsRef.current[index] = el)}}
                     inputMode="numeric"
                     disabled={isDisabled}
-                    className={`w-12 h-12 text-center rounded focus:outline-none border-none focus:ring-2 focus:ring-blue-500 ${
-                      isDisabled ? "bg-gray-200 cursor-not-allowed" : "bg-white"
+                    className={`w-12 sm:w-14 md:w-13 h-12 text-center rounded focus:outline-none border-none focus:ring-2 focus:ring-blue-500 ${
+                      isDisabled ? "bg-gray-200 cursor-not-allowed" : "bg-gray-200"
                     }`}
                   />
                 );
