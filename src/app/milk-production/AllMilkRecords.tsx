@@ -14,7 +14,7 @@ import rightClick from "@/assets/pagination-right.png";
 import leftClick from "@/assets/pagination-left.png";
 import search from "@/assets/search.png";
 import whiteDropDown from "@/assets/white-drop-down.png";
-import whitePlus from "@/assets/white-plus.png"
+import whitePlus from "@/assets/white-plus.png";
 
 const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
   const [allRecords, setAllRecords] = useState(allMilkRecords);
@@ -92,7 +92,9 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
           <div className="flex gap-2 items-center">
             <p className="text-[#A4A4A4] text-[16px] font-[500]">Dashboard</p>
             <Image src={arrow} alt="arrow" className="w-4 h-auto" />
-            <p className="text-primary text-[16px] font-[500]">Milk Production Record</p>
+            <p className="text-primary text-[16px] font-[500]">
+              Milk Production Record
+            </p>
           </div>
         </div>
         <div className="flex gap-3 items-end milk-production-options">
@@ -154,11 +156,11 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
       <div className="mt-6 overflow-x-auto">
         <div className="min-w-[900px] w-full">
           {/* Heading row */}
-          <div className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-[#4A4A4A] text-[16px] whitespace-nowrap font-[500] gap-3 rounded-xl mx-4">
+          <div className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-[#4A4A4A] text-[16px] whitespace-nowrap font-[500]rounded-xl mx-4 gap-3">
             <p></p>
             <p>Cattle Type</p>
             <p>Cattle ID</p>
-            <p>Date</p>
+            <p className="pl-4">Date</p>
             <p>Morning Milk</p>
             <p>Afternoon Milk</p>
             <p>Evening Milk</p>
@@ -173,10 +175,10 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
               return (
                 <div key={eachRecord.id}>
                   <div
-                    className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] gap-2 whitespace-nowrap items-center"
+                    className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center mx-6 gap-3"
                     key={eachRecord.id}
                   >
-                    <div className="w-10 h-10 rounded-[50%]overflow-hidden flex object-cover mx-6">
+                    <div className="w-10 h-10 rounded-[50%]overflow-hidden flex object-cover">
                       <Image
                         src={eachRecord?.cattle?.image1}
                         width={100}
@@ -195,7 +197,7 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
                     <p className="text-[#4A4A4A] ">
                       {format(parseISO(eachRecord.date), "MMM dd, yyyy")}
                     </p>
-                    <p className="text-[#4A4A4A] text-center ">
+                    <p className="text-[#4A4A4A] text-center">
                       {lowerExceptFirst(eachRecord.morningMilk)}
                     </p>
                     <p className="text-[#4A4A4A] text-center">
@@ -238,7 +240,7 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
       </div>
 
       {/*  Pagination */}
-      <div className="flex justify-between items-center mt-3">
+      <div className="flex justify-between items-center mt-3 mx-4">
         <p className="text-sm">
           Showing 1 to 25 of {allRecords.length} entries
         </p>

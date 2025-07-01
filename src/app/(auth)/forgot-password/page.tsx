@@ -8,9 +8,12 @@ import userIcon from "@/assets/userIcon.png";
 import lefrArrow from "@/assets/leftArrow.png";
 import { useRouter } from "next/navigation";
 import BlockNavigation from "../../common/NavigationBlocking";
+import { useContextData } from "@/app/Context";
 
 const ForgotPage = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
+
+  const {setEmail:setEmailValue}=useContextData() as any 
 
   const router = useRouter();
 
@@ -26,8 +29,9 @@ const ForgotPage = () => {
     axios
       .post(`${API_URI}/api/user/send-otp`, { email })
       .then((res) => {
-        toast.success(res?.data?.message);
-        router.push(`/forgot-password/${email}`);
+  /*       toast.success(res?.data?.message); */
+        setEmailValue(email)
+        router.push(`/forgot-password/verify-otp`);
       })
       .catch((err) => toast.error(err?.response?.data?.message))
       .finally(() => setLoading(false));
@@ -36,7 +40,6 @@ const ForgotPage = () => {
 
   return (
     <>
-      <ToastContainer />
       <BlockNavigation/>
       <div>
         <h1 className="text-[24px] font-[600] text-primary text-center my-3">
@@ -107,24 +110,9 @@ const ForgotPage = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 };
 
 export default ForgotPage;
-
-{
-  /* <div className='flex h-[100vh] items-center md:gap-4'>
-        <div className='flex-1 hidden md:block'>
-            <Image src={loginLogo} alt="loginLogo" className='h-[100vh] object-cover w-auto'/>
-        </div>
-        <div className='flex-1'>
-            <div className='w-[406px] m-auto sm:p-0 xm:p-4 md:pr-4'>
-                <div className='flex justify-center'>
-                    <Image src={logo} alt="logo" className='w-[232px] h-[58px]'/>
-                </div>
-               
-            </div>
-        </div>
-    </div> */
-}

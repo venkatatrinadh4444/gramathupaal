@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState ,useRef , useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Image from "next/image";
@@ -11,22 +11,24 @@ import eyeClose from "@/assets/eye-close.png";
 import { useRouter } from "next/navigation";
 import BlockNavigation from "@/app/common/NavigationBlocking";
 import { Modal } from "flowbite";
+import { useContextData } from "@/app/Context";
 
 const NewPasswordPage = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
   const [newPasswordShow, setNewPasswordShow] = useState(false);
   const [confirmPasswordShow, setConfirmPasswordShow] = useState(false);
-  const params = useParams();
+
   const router = useRouter();
 
-    //For modal
-    const modalRef = useRef<HTMLDivElement | null>(null);
-    const modalInstance = useRef<Modal | null>(null);
-  
+  //For modal
+  const modalRef = useRef<HTMLDivElement | null>(null);
+  const modalInstance = useRef<Modal | null>(null);
 
-  const encodedParam = params?.email as string;
+  const { email } = useContextData() as any;
 
-  const email = decodeURIComponent(encodedParam);
+  if(!email) {
+    router.push('/forgot-password')
+  }
 
   const [data, setData] = useState({
     password: "",
@@ -47,7 +49,7 @@ const NewPasswordPage = () => {
       .put(`${API_URI}/api/user/reset-password`, { email, password })
       .then((res) => {
         toast.success(res?.data?.message);
-        router.push('/login')
+        router.push("/login");
       })
       .catch((err) => toast.error(err?.response?.data?.message));
   };
@@ -72,8 +74,7 @@ const NewPasswordPage = () => {
 
   return (
     <>
-
-      <BlockNavigation/>
+      <BlockNavigation />
       <div>
         <h1 className="text-[24px] font-[600] text-primary text-center my-3">
           Set a New Password
@@ -217,7 +218,7 @@ const NewPasswordPage = () => {
               <button
                 type="button"
                 className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
-                onClick={() => router.push('/forgot-password')}
+                onClick={() => router.push("/forgot-password")}
               >
                 {"Yes, I'm sure"}
               </button>

@@ -1,40 +1,48 @@
 "use client";
+
 import { Modal } from "flowbite";
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import { useRouter } from "next/navigation";
 import leftArrow from "@/assets/leftArrow.png";
 import BlockNavigation from "@/app/common/NavigationBlocking";
+import { useContextData } from "@/app/Context";
+import { useRouter } from "next/navigation";
 
 const VerifyIdentity = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
-  const params = useParams();
   const router = useRouter();
+  const { email } = useContextData() as any;
 
-  const encodedURI = params?.email as string;
-
-  const email = decodeURIComponent(encodedURI);
   const [loading, setLoading] = useState(false);
-
-  // for OTP validation
-
-  const length = 6;
-  const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
-  const [lastEditableIndex, setLastEditableIndex] = useState(0);
-  const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
-
-  //For interval
-  const [seconds, setSeconds] = useState(0);
-  const intervalReference = useRef<NodeJS.Timeout | null>(null);
+  const [showRefreshBlockedModal, setShowRefreshBlockedModal] = useState(false);
 
   //For modal
   const modalRef = useRef<HTMLDivElement | null>(null);
   const modalInstance = useRef<Modal | null>(null);
 
+  // for OTP validation
+
+  const length = 6;
+  const [otp, setOtp] = useState<string[]>(Array(length).fill(""));
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
+  //For interval
+  const [seconds, setSeconds] = useState(0);
+  const intervalReference = useRef<NodeJS.Timeout | null>(null);
+  // track whether we’re in “backspace‑chain” mode
+  const [chainEnabled, setChainEnabled] = useState(false);
+
   //For handling OTP inputs
+
+  // Move focus manually if backspacing in chain
+  useEffect(() => {
+    if (focusedIndex !== null) {
+      inputsRef.current[focusedIndex]?.focus();
+    }
+  }, [focusedIndex]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
@@ -45,10 +53,13 @@ const VerifyIdentity = () => {
     const newOtp = [...otp];
     newOtp[index] = val.slice(-1);
     setOtp(newOtp);
+    setChainEnabled(false);
 
-    if (val && index < length - 1) {
+    // Only move forward if value was typed AND current box is not last
+    if (val.length === 1 && index < length - 1) {
       const nextIndex = index + 1;
-      setLastEditableIndex(nextIndex);
+
+      // Delay the focus so React updates state first
       setTimeout(() => {
         inputsRef.current[nextIndex]?.focus();
       }, 0);
@@ -59,39 +70,94 @@ const VerifyIdentity = () => {
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
   ) => {
-    if (e.key === "Backspace") {
-      const newOtp = [...otp];
+    if (e.key !== "Backspace") return;
+    e.preventDefault();
 
-      if (newOtp[index]) {
-        newOtp[index] = "";
-        setOtp(newOtp);
-        setLastEditableIndex(index);
-      } else if (index > 0) {
-        newOtp[index - 1] = "";
-        setOtp(newOtp);
-        setLastEditableIndex(index - 1);
-        setTimeout(() => {
-          inputsRef.current[index - 1]?.focus();
-        }, 0);
-      }
+    if (index === length - 1) {
+      setChainEnabled(true);
     }
+
+    if (chainEnabled) {
+      // recursive delete
+      const deleteBackward = (i: number) => {
+        if (i < 0) return;
+
+        setOtp((prevOtp) => {
+          const updatedOtp = [...prevOtp];
+
+          if (updatedOtp[i]) {
+            updatedOtp[i] = "";
+            setFocusedIndex(i);
+
+            // schedule next step
+            setTimeout(() => deleteBackward(i - 1), 100);
+          } else {
+            // even if current is empty, keep going
+            setTimeout(() => deleteBackward(i - 1), 0);
+          }
+
+          return updatedOtp;
+        });
+      };
+
+      deleteBackward(index);
+    } else {
+      // normal mode: just clear current
+      setOtp((prevOtp) => {
+        const updatedOtp = [...prevOtp];
+        if (updatedOtp[index]) {
+          updatedOtp[index] = "";
+        }
+        return updatedOtp;
+      });
+    }
+  };
+
+  /*  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (e.key !== "Backspace") return;
+    e.preventDefault();
+  
+    setOtp((prevOtp) => {
+      const updatedOtp = [...prevOtp];
+  
+      if (updatedOtp[index]) {
+        // Just clear current input
+        updatedOtp[index] = "";
+        setFocusedIndex(index);
+      } else if (index > 0) {
+        // Move focus left and clear previous value
+        updatedOtp[index - 1] = "";
+        setFocusedIndex(index - 1);
+      }
+  
+      return updatedOtp;
+    });
+  }; */
+
+  const handleFocus = (index: number) => {
+    // is OTP fully filled right now?
+    const full = otp.every((d) => d !== "");
+    // enable chain only if click landed on the last input *and* it's full
+    setChainEnabled(full && index === length - 1);
+
+    // ← record which box is focused so our effect can move focus on chain
+    setFocusedIndex(index);
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const pasteData = e.clipboardData.getData("Text").slice(0, length);
-    if (!/^\d+$/.test(pasteData)) return;
+    const pasted = e.clipboardData.getData("Text").slice(0, length);
+    if (!/^\d+$/.test(pasted)) return;
 
     const newOtp = Array(length).fill("");
-    pasteData.split("").forEach((digit, i) => {
-      if (i < length) newOtp[i] = digit;
+    pasted.split("").forEach((char, i) => {
+      newOtp[i] = char;
     });
-
     setOtp(newOtp);
-    setLastEditableIndex(pasteData.length - 1);
-    setTimeout(() => {
-      inputsRef.current[pasteData.length - 1]?.focus();
-    }, 0);
+    setChainEnabled(false);
   };
 
   // form submit
@@ -153,6 +219,35 @@ const VerifyIdentity = () => {
     startInterval();
   }, []);
 
+  // prevent refresh
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        seconds > 0 &&
+        (e.key === "F5" || (e.ctrlKey && e.key.toLowerCase() === "r"))
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowRefreshBlockedModal(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [seconds]);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (seconds > 0) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [seconds]);
+
   // Modal section
   useEffect(() => {
     if (modalRef.current) {
@@ -175,7 +270,6 @@ const VerifyIdentity = () => {
 
   return (
     <>
-      <ToastContainer />
       <BlockNavigation />
       <div>
         <h1 className="text-[24px] font-[600] text-primary text-center my-3">
@@ -194,34 +288,30 @@ const VerifyIdentity = () => {
               Enter OTP
             </label>
             <div className="flex justify-center gap-3 mt-2">
-              {otp.map((digit, index) => {
-                const isDisabled = index !== lastEditableIndex;
-
-                return (
-                  <input
-                    key={index}
-                    type="text"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleChange(e, index)}
-                    onKeyDown={(e) => handleKeyDown(e, index)}
-                    onPaste={handlePaste}
-                    ref={(el) => {(inputsRef.current[index] = el)}}
-                    inputMode="numeric"
-                    disabled={isDisabled}
-                    className={`w-12 sm:w-14 md:w-13 h-12 text-center rounded focus:outline-none border-none focus:ring-2 focus:ring-blue-500 ${
-                      isDisabled ? "bg-gray-200 cursor-not-allowed" : "bg-gray-200"
-                    }`}
-                  />
-                );
-              })}
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleChange(e, index)}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  onPaste={handlePaste}
+                  onFocus={() => handleFocus(index)} // ← Add this line
+                  ref={(el) => {
+                    inputsRef.current[index] = el;
+                  }}
+                  inputMode="numeric"
+                  disabled={index !== 0 && otp[index - 1] === ""}
+                  className={`w-12 sm:w-14 md:w-13.5 h-12 text-center rounded focus:outline-none border-none focus:ring-2 focus:ring-blue-500 bg-gray-200`}
+                />
+              ))}
             </div>
             {seconds === 0 ? (
               <p
                 className="text-[16px] text-primary text-end cursor-pointer mr-1"
                 onClick={resendOTP}
               >
-                {" "}
                 Resend OTP
               </p>
             ) : (
@@ -251,12 +341,12 @@ const VerifyIdentity = () => {
             <p className="text-sm text-neutral-600">Go back</p>
           </div>
           <div>
-            <p
-              className="text-sm underline text-green-400 cursor-pointer"
+            {seconds===0 && <p
+              className="text-sm underline text-primary cursor-pointer"
               onClick={() => router.push("/login")}
             >
               Login
-            </p>
+            </p>}
           </div>
         </div>
       </div>
@@ -318,38 +408,35 @@ const VerifyIdentity = () => {
               >
                 {"Yes, I'm sure"}
               </button>
-              <button
-                type="button"
-                className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                onClick={closeModal}
-              >
-                No, cancel
-              </button>
             </div>
           </div>
         </div>
       </div>
+
+      {/*    Refresh Toast message */}
+      {showRefreshBlockedModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm text-center">
+            <h2 className="text-xl font-semibold text-red-600 mb-2">
+              Refresh Blocked
+            </h2>
+            <p className="text-gray-700">
+              You cannot refresh the page while the OTP timer is running. Please
+              wait until the timer ends.
+            </p>
+            <button
+              onClick={() => setShowRefreshBlockedModal(false)}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Okay
+            </button>
+          </div>
+        </div>
+      )}
+
+      <ToastContainer />
     </>
   );
 };
 
 export default VerifyIdentity;
-
-/* 
-<div className="flex h-[100vh] items-center md:gap-4">
-        <div className="flex-1 hidden md:block">
-          <Image
-            src={loginLogo}
-            alt="loginLogo"
-            className="h-[100vh] object-cover w-auto"
-          />
-        </div>
-        <div className="flex-1">
-          <div className="w-[406px]  m-auto">
-            <div className="flex justify-center">
-              <Image src={logo} alt="logo" className="w-[232px] h-[58px]" />
-            </div>
-            
-          </div>
-        </div>
-      </div> */

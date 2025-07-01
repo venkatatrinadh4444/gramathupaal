@@ -57,3 +57,9 @@
         align-items: start;
     }
 }
+
+@media screen and (max-width:440px) {
+    .add-new-cattle-navigation-slide-bar {
+        width: 240px;
+    }
+}
