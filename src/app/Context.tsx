@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const UserContext = createContext({});
 const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
@@ -13,16 +13,27 @@ export const UserContextProvider = ({
   children: React.ReactNode;
 }) => {
   const router = useRouter();
+  const pathName = usePathname();
   const [user, setUser] = useState({});
-  const [email,setEmail]=useState('')
+  const [email, setEmail] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const excludePaths = [
+    "/login",
+    "/forgot-password",
+    "/forgot-password/verify-otp",
+    "/reset-password",
+  ];
+
 
   const handleTokenMissing = () => {
-    setShowAlert(true);
-    setTimeout(() => {
-      setShowAlert(false); // hide alert after 2 seconds
-      router.replace("/login");
-    }, 2000);
+    if (!excludePaths.includes(pathName)) {
+      console.log('method',pathName)
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false); // hide alert after 2 seconds
+        router.replace("/login");
+      }, 2000);
+    }
   };
 
   const fetchUser = () => {
@@ -50,7 +61,7 @@ export const UserContextProvider = ({
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, setUser , email , setEmail}}>
+    <UserContext.Provider value={{ user, setUser, email, setEmail }}>
       {children}
 
       {showAlert && (
@@ -85,7 +96,6 @@ export const UserContextProvider = ({
 export const useContextData = () => {
   return useContext(UserContext);
 };
-
 
 /* "use client";
 

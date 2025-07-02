@@ -15,75 +15,49 @@ import leftClick from "@/assets/pagination-left.png";
 import search from "@/assets/search.png";
 import whiteDropDown from "@/assets/white-drop-down.png";
 import whitePlus from "@/assets/white-plus.png";
+import axios from "axios";
 
-const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
-  const [allRecords, setAllRecords] = useState(allMilkRecords);
+const AllMilkRecords = () => {
+  const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
+
+  const [milkOverview,setMilkOverview]=useState({}) as any
+
+  const [allRecords, setAllRecords] = useState([]);
 
   const router = useRouter();
 
-  /* Handling Pagination */
-  const pageSize = 25;
-
   const [page, setPage] = useState(1);
-
-  const totalPages = Math.ceil(allMilkRecords?.length / pageSize);
-  const startIndex = (page - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-
-  const handleNext = () => {
-    if (endIndex < allMilkRecords?.length) {
-      setPage(page + 1);
-    }
-  };
-
-  const handlePrev = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
-  const goToPage = (page: number) => {
-    setPage(page);
-  };
 
   const getPaginationRange = () => {
     const delta = 1;
-    const range = [];
-    const rangeWithDots = [];
-    let l: number | undefined;
+    const total = milkOverview?.totalPages || 1;
 
-    for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= page - delta && i <= page + delta)
-      ) {
-        range.push(i);
-      }
-    }
+    // Full range from 1 to total
+    const allPages = Array.from({ length: total }, (_, i) => i + 1);
 
-    for (let i of range) {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l !== 1) {
-          rangeWithDots.push("...");
-        }
-      }
-      rangeWithDots.push(i);
-      l = i as number;
-    }
+    // Filter to include: first, last, current ± delta
+    const visiblePages = allPages.filter(
+      (i) => i === 1 || i === total || (i >= page - delta && i <= page + delta)
+    );
 
-    return rangeWithDots;
+    // Remove duplicates and sort
+    return Array.from(new Set(visiblePages)).sort((a, b) => a - b);
   };
 
   useEffect(() => {
-    const slicedData = allMilkRecords?.slice(startIndex, endIndex);
-    setAllRecords(slicedData);
+    axios
+      .get(`${API_URI}/api/dashboard/milk/all-milk-records/${page}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setMilkOverview(res?.data?.milkOverview)
+        setAllRecords(res?.data?.milkOverview?.allRecords)
+      })
+      .catch(err=>console.log(err));
   }, [page]);
 
   return (
-    <div className=" rounded-2xl bg-white py-6 mx-4 my-4">
+    <div className=" rounded-[20px] bg-white py-6 mx-4 my-4">
       <div className="flex justify-between xxl:items-end flex-col xxl:flex-row items-start gap-4 xxl:gap-0 xxl:mx-8 mx-4">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
@@ -156,7 +130,7 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
       <div className="mt-6 overflow-x-auto">
         <div className="min-w-[900px] w-full">
           {/* Heading row */}
-          <div className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-[#4A4A4A] text-[16px] whitespace-nowrap font-[500]rounded-xl mx-4 gap-3">
+          <div className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-heading text-[16px] whitespace-nowrap rounded-2xl mx-4 gap-3 font-[500]">
             <p></p>
             <p>Cattle Type</p>
             <p>Cattle ID</p>
@@ -216,7 +190,7 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
                       className="flex justify-center"
                       onClick={() =>
                         router.push(
-                          `cattle-management/${eachRecord?.cattle?.cattleName}`
+                          `milk-production/${eachRecord?.cattle?.cattleName}`
                         )
                       }
                     >
@@ -231,7 +205,7 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
                     </div>
                   </div>
                   <div className="w-full">
-                    <hr className="border border-para opacity-40 rounded-lg" />
+                    <hr className="border border-para opacity-20 rounded-lg" />
                   </div>
                 </div>
               );
@@ -242,44 +216,35 @@ const AllMilkRecords = ({ allMilkRecords }: { allMilkRecords: any }) => {
       {/*  Pagination */}
       <div className="flex justify-between items-center mt-3 mx-4">
         <p className="text-sm">
-          Showing 1 to 25 of {allRecords.length} entries
+          Showing 1 to 25 of {milkOverview?.totalRecordsCount} entries
         </p>
         <div className="flex items-center gap-5">
           <button
-            onClick={handlePrev}
-            className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:border-none"
-            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+            className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:cursor-auto"
+            disabled={page===1}
           >
             <Image src={leftClick} alt="left" className="w-[8px] h-auto" />
           </button>
 
-          {getPaginationRange().map((eachPage, idx) =>
-            typeof eachPage === "number" ? (
-              <button
-                key={idx}
-                onClick={() => goToPage(eachPage)}
-                className={`w-6 h-6 flex items-center justify-center rounded text-sm font-dmSans ${
-                  page === eachPage
-                    ? "bg-primary text-white"
-                    : "bg-white text-black"
-                }`}
-              >
-                {eachPage}
-              </button>
-            ) : (
-              <span
-                key={idx}
-                className="w-6 h-6 flex items-center justify-center text-sm"
-              >
-                ...
-              </span>
-            )
-          )}
+          {getPaginationRange().map((eachPage, idx) => (
+            <button
+              key={idx}
+              onClick={() => setPage(eachPage)}
+              className={`w-6 h-6 flex items-center justify-center rounded text-sm font-dmSans ${
+                page === eachPage
+                  ? "bg-primary text-white"
+                  : "bg-white text-black"
+              }`}
+            >
+              {eachPage}
+            </button>
+          ))}
 
           <button
-            onClick={handleNext}
-            className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:border-none"
-            disabled={endIndex >= allMilkRecords?.length}
+            onClick={() => setPage(page + 1)}
+            className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:cursor-auto"
+            disabled={page===milkOverview?.totalPages}
           >
             <Image src={rightClick} alt="left" className="w-[8px] h-auto" />
           </button>

@@ -73,7 +73,7 @@ const AllAnimals = () => {
   }, [page]);
 
   return (
-    <div className="rounded-2xl bg-white py-6 mx-4 my-4">
+    <div className="rounded-[20px] bg-white py-6 mx-4 my-4">
       <div className="flex justify-between lg:items-end flex-col lg:flex-row items-start gap-4 lg:gap-0 md:mx-8 mx-4">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">

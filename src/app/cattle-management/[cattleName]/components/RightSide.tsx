@@ -1,9 +1,9 @@
 import lowerExceptFirst from "@/app/common/lowerExceptFirst";
-import { format , parseISO } from 'date-fns'
+import { format, parseISO } from "date-fns";
 
-const RightSide = ({cattleDetails}:any) => {
+const RightSide = ({ cattleDetails }: any) => {
   return (
-    <div className="flex-1">
+    <div className="xl:flex-1">
       {/*  Cattle Information */}
       <div className="mb-8 mt-2">
         <h1 className="text-primary text-[20px] font-dmSans font-[600]">
@@ -12,14 +12,16 @@ const RightSide = ({cattleDetails}:any) => {
         <p className="text-[16px] text-para">
           Basic and Breeding Info of This Cattle
         </p>
-        <div className="flex justify-between mt-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-2 gap-3 xl:grid xl:grid-cols-3 xxl:flex xxl:gap-10 mt-3">
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">Cattle ID</h3>
-            <p className="text-[20px] text-heading">{"#"+cattleDetails?.cattleName}</p>
+            <p className="text-[20px] text-heading">
+              {"#" + cattleDetails?.cattleName}
+            </p>
           </div>
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">Status</h3>
-            <p className="text-[14px] rounded-md bg-primary px-3 py-1 text-white">
+            <p className="text-[14px] rounded-md bg-primary px-3 py-1 text-white w-fit">
               {lowerExceptFirst(cattleDetails?.healthStatus)}
             </p>
           </div>
@@ -27,21 +29,29 @@ const RightSide = ({cattleDetails}:any) => {
             <h3 className="text-[16px] font-dmSans text-heading">
               Cattle Type
             </h3>
-            <p className="text-[20px] text-heading">{lowerExceptFirst(cattleDetails?.type)}</p>
+            <p className="text-[20px] text-heading">
+              {lowerExceptFirst(cattleDetails?.type)}
+            </p>
           </div>
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">
               Cattle Weight
             </h3>
-            <p className="text-[20px] text-heading">{cattleDetails?.weight+" Kg"}</p>
+            <p className="text-[20px] text-heading">
+              {cattleDetails?.weight + " Kg"}
+            </p>
           </div>
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">SNF%</h3>
-            <p className="text-[20px] text-heading">{cattleDetails?.snf+"%"}</p>
+            <p className="text-[20px] text-heading">
+              {cattleDetails?.snf + "%"}
+            </p>
           </div>
         </div>
       </div>
+
       <hr className="border border-para opacity-20 rounded-lg" />
+
       {/* Breed Info */}
       <div className="my-8">
         <h1 className="text-primary font-dmSans text-[20px] font-[600]">
@@ -50,16 +60,26 @@ const RightSide = ({cattleDetails}:any) => {
         <p className="text-para text-[16px]">
           Related to cattle’s family or insemination
         </p>
-        <div className="flex gap-20 mt-3">
+        <div className="flex gap-3 flex-col sm:flex-row sm:gap-10 xl:flex xl:gap-10 lg:grid lg:grid-cols-2 lg:gap-x-6 lg:gap-y-3 mt-3">
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">
               Father Insemination
             </h3>
-            <p className="text-[20px] text-heading">{lowerExceptFirst(cattleDetails?.fatherInsemination?.split("_")[0])} {lowerExceptFirst(cattleDetails?.fatherInsemination?.split("_")[1])}</p>
+            <p className="text-[20px] text-heading">
+              {lowerExceptFirst(
+                cattleDetails?.fatherInsemination?.split("_")[0]
+              )}{" "}
+              {lowerExceptFirst(
+                cattleDetails?.fatherInsemination?.split("_")[1]
+              )}
+            </p>
           </div>
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">Parent</h3>
-            <p className="text-[20px] text-heading">{lowerExceptFirst(cattleDetails?.parent?.split("_")[0])} {lowerExceptFirst(cattleDetails?.parent?.split("_")[1])}</p>
+            <p className="text-[20px] text-heading">
+              {lowerExceptFirst(cattleDetails?.parent?.split("_")[0])}{" "}
+              {lowerExceptFirst(cattleDetails?.parent?.split("_")[1])}
+            </p>
           </div>
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">Breed</h3>
@@ -69,6 +89,8 @@ const RightSide = ({cattleDetails}:any) => {
       </div>
 
       <hr className="border border-para opacity-20 rounded-lg" />
+
+      {/* Dates and purchase info */}
       <div className="flex mt-4 flex-col xxl:flex-row gap-4 xxl:gap-16">
         {/* Dates */}
         <div>
@@ -78,19 +100,21 @@ const RightSide = ({cattleDetails}:any) => {
           <p className="text-para text-[16px]">
             Helps with tracking age and farm history
           </p>
-          <div className="flex justify-between mt-3">
+          <div className="flex gap-6 sm:gap-20 mt-3">
             <div>
               <h3 className="text-[16px] font-dmSans text-heading">
                 Birth Date
               </h3>
-              <p className="text-[20px] text-heading">{format(parseISO(cattleDetails?.birthDate),"MMM dd, yyyy")}</p>
+              <p className="text-[20px] text-heading text-nowrap">
+                {format(parseISO(cattleDetails?.birthDate), "MMM dd, yyyy")}
+              </p>
             </div>
             <div>
               <h3 className="text-[16px] font-dmSans text-heading">
                 Farm Entry Date
               </h3>
-              <p className="text-[20px] text-heading">
-                {format(parseISO(cattleDetails?.farmEntryDate),"MMM dd, yyyy")}
+              <p className="text-[20px] text-heading text-nowrap">
+                {format(parseISO(cattleDetails?.farmEntryDate), "MMM dd, yyyy")}
               </p>
             </div>
           </div>
@@ -104,18 +128,22 @@ const RightSide = ({cattleDetails}:any) => {
           <p className="text-para text-[16px]">
             Financial tracking for this cattle
           </p>
-          <div className="flex justify-between mt-3">
+          <div className="flex gap-6 sm:gap-20 mt-3">
             <div>
               <h3 className="text-[16px] font-dmSans text-heading">
                 Purchase Amount
               </h3>
-              <p className="text-[20px] text-heading">{cattleDetails?.purchaseAmount}</p>
+              <p className="text-[20px] text-heading">
+                {cattleDetails?.purchaseAmount}
+              </p>
             </div>
             <div>
               <h3 className="text-[16px] font-dmSans text-heading">
                 Vendor Name
               </h3>
-              <p className="text-[20px] text-heading">{cattleDetails?.vendorName}</p>
+              <p className="text-[20px] text-heading">
+                {cattleDetails?.vendorName}
+              </p>
             </div>
           </div>
         </div>

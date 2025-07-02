@@ -37,7 +37,7 @@ const AnimalDetailPage = () => {
       .then((res) => {
         setCattleDetails(res?.data?.animalDetails);
       })
-      .catch(() => router.push("/auth/login-page"));
+      .catch(err=>console.log(err));
   }, [cattleName, API_URI]);
 
   return (
@@ -66,7 +66,7 @@ const AnimalDetailPage = () => {
               </p>
               <Image src={arrow} alt="arrow" className="w-4 h-auto" />
               <p className="text-primary text-[16px] font-[500]">
-                Add New Cattle
+                {cattleName && cattleName}
               </p>
             </div>
           </div>
@@ -74,7 +74,7 @@ const AnimalDetailPage = () => {
             <div className="bg-[#4A4A4A] rounded-lg flex items-center px-3 cursor-pointer">
               <Image src={deleteIcon} alt="cross" className="w-[18px] h-auto" />
             </div>
-            <div className="bg-primary px-3 py-2.5 rounded-lg flex gap-1 items-center text-white cursor-pointer">
+            <div className="bg-primary px-3 py-2.5 rounded-lg flex gap-1 items-center text-white cursor-pointer" onClick={()=>router.push(`edit-cattle/${cattleName}`)}>
               <Image src={editIcon} alt="cross" className="w-[18px] h-auto" />
               <p>Edit Information</p>
             </div>
@@ -82,7 +82,7 @@ const AnimalDetailPage = () => {
         </div>
 
         {/*Two parts */}
-        <div className="flex gap-8 mt-8 mx-8">
+        <div className="flex flex-col md:flex-row gap-8 mt-8 mx-8 flex-1">
           {cattleDetails?.cattleDetails?.cattleName && (
             <LeftSide
               cattleDetails={cattleDetails}
@@ -101,7 +101,7 @@ const AnimalDetailPage = () => {
         <div>
             {showFeedHistory && (
               <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[60%] overflow-hidden">
+                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[80%] md:w-[60%]overflow-hidden">
                   <FeedHistory
                     onCloseFeed={() => setShowFeedHistory(false)}
                     cattleName={cattleName}
@@ -112,7 +112,7 @@ const AnimalDetailPage = () => {
 
             {showClafHistory && (
               <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[60%] overflow-hidden">
+                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[80%] md:w-[60%] overflow-hidden">
                   <ClafHistory
                     onCloseFeed={() => setShowClafHistory(false)}
                     cattleName={cattleName}
@@ -123,7 +123,7 @@ const AnimalDetailPage = () => {
 
             {showMilkHistory && (
               <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[60%] overflow-hidden">
+                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[80%] md:w-[60%] overflow-hidden">
                   <MilkHistory
                     onCloseFeed={() => setShowMilkHistory(false)}
                     cattleName={cattleName}
@@ -134,7 +134,7 @@ const AnimalDetailPage = () => {
 
             {showVaccinationHistory && (
               <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
-                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[60%] overflow-hidden">
+                <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-[90%] sm:w-[80%] md:w-[60%] overflow-hidden">
                   <VaccinationHistory
                     onCloseFeed={() => setShowVaccinationHistory(false)}
                     cattleName={cattleName}
