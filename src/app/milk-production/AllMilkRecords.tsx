@@ -16,13 +16,15 @@ import search from "@/assets/search.png";
 import whiteDropDown from "@/assets/white-drop-down.png";
 import whitePlus from "@/assets/white-plus.png";
 import axios from "axios";
+import AddMilkRecord from "./add-milk-record/page";
 
 const AllMilkRecords = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
 
-  const [milkOverview,setMilkOverview]=useState({}) as any
+  const [milkOverview, setMilkOverview] = useState({}) as any;
 
   const [allRecords, setAllRecords] = useState([]);
+  const [showAddMilk,setShowAddMilk] = useState(false)
 
   const router = useRouter();
 
@@ -50,25 +52,27 @@ const AllMilkRecords = () => {
         withCredentials: true,
       })
       .then((res) => {
-        setMilkOverview(res?.data?.milkOverview)
-        setAllRecords(res?.data?.milkOverview?.allRecords)
+        setMilkOverview(res?.data?.milkOverview);
+        setAllRecords(res?.data?.milkOverview?.allRecords);
       })
-      .catch(err=>console.log(err));
+      .catch((err) => console.log(err));
   }, [page]);
 
   return (
-    <div className=" rounded-[20px] bg-white py-6 mx-4 my-4">
+    <div className="relative rounded-[20px] bg-white py-6 mx-4 my-4 overflow-hidden">
       <div className="flex justify-between xxl:items-end flex-col xxl:flex-row items-start gap-4 xxl:gap-0 xxl:mx-8 mx-4">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
             Milk Production Record
           </h1>
-          <div className="flex gap-2 items-center">
-            <p className="text-[#A4A4A4] text-[16px] font-[500]">Dashboard</p>
-            <Image src={arrow} alt="arrow" className="w-4 h-auto" />
-            <p className="text-primary text-[16px] font-[500]">
-              Milk Production Record
-            </p>
+          <div className="overflow-x-auto">
+            <div className="flex gap-2 items-center">
+              <p className="text-[#A4A4A4] text-[16px] font-[500]">Dashboard</p>
+              <Image src={arrow} alt="arrow" className="w-4 h-auto" />
+              <p className="text-primary text-[16px] font-[500] text-nowrap">
+                Milk Production Record
+              </p>
+            </div>
           </div>
         </div>
         <div className="flex gap-3 items-end milk-production-options">
@@ -118,10 +122,10 @@ const AllMilkRecords = () => {
           </div>
           <div
             className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-2.5 px-3.5 justify-center"
-            onClick={() => router.push("/cattle-management/add-new-cattle")}
+            onClick={()=>setShowAddMilk(true)}
           >
             <Image src={whitePlus} alt="add" width={20} className="h-auto" />
-            <p className="text-sm text-white font-[500]">Add Cattle</p>
+            <p className="text-sm text-white font-[500]">Add Milk Record</p>
           </div>
         </div>
       </div>
@@ -214,7 +218,7 @@ const AllMilkRecords = () => {
       </div>
 
       {/*  Pagination */}
-      <div className="flex justify-between items-center mt-3 mx-4">
+      <div className="flex justify-between flex-col gap-2 sm:flex-row items-center mt-3 mx-4">
         <p className="text-sm">
           Showing 1 to 25 of {milkOverview?.totalRecordsCount} entries
         </p>
@@ -222,7 +226,7 @@ const AllMilkRecords = () => {
           <button
             onClick={() => setPage(page - 1)}
             className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:cursor-auto"
-            disabled={page===1}
+            disabled={page === 1}
           >
             <Image src={leftClick} alt="left" className="w-[8px] h-auto" />
           </button>
@@ -244,12 +248,22 @@ const AllMilkRecords = () => {
           <button
             onClick={() => setPage(page + 1)}
             className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:cursor-auto"
-            disabled={page===milkOverview?.totalPages}
+            disabled={page === milkOverview?.totalPages}
           >
             <Image src={rightClick} alt="left" className="w-[8px] h-auto" />
           </button>
         </div>
       </div>
+
+      {/* pop over */}
+
+      {showAddMilk && (
+        <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[50%] xl:w-[55%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden sm:p-10 p-6">
+            <AddMilkRecord onAddMilk={()=>setShowAddMilk(false)}/>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -3,16 +3,16 @@ import { format, parseISO } from "date-fns";
 
 const RightSide = ({ cattleDetails }: any) => {
   return (
-    <div className="xl:flex-1">
+    <>
       {/*  Cattle Information */}
-      <div className="mb-8 mt-2">
+      <div className="mb-6 mt-2">
         <h1 className="text-primary text-[20px] font-dmSans font-[600]">
           Cattle Information
         </h1>
         <p className="text-[16px] text-para">
           Basic and Breeding Info of This Cattle
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-2 gap-3 xl:grid xl:grid-cols-3 xxl:flex xxl:gap-10 mt-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-3 xl:grid xl:grid-cols-3 xxl:flex xxl:gap-10 mt-3">
           <div>
             <h3 className="text-[16px] font-dmSans text-heading">Cattle ID</h3>
             <p className="text-[20px] text-heading">
@@ -53,7 +53,7 @@ const RightSide = ({ cattleDetails }: any) => {
       <hr className="border border-para opacity-20 rounded-lg" />
 
       {/* Breed Info */}
-      <div className="my-8">
+      <div className="my-6">
         <h1 className="text-primary font-dmSans text-[20px] font-[600]">
           Breeding Info
         </h1>
@@ -148,7 +148,7 @@ const RightSide = ({ cattleDetails }: any) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

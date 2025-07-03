@@ -122,6 +122,7 @@ const AddNewCattle = () => {
             <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
               Add New Cattle
             </h1>
+            {/* navigation menus */}
             <div className="overflow-x-auto whitespace-nowrap add-new-cattle-navigation-slide-bar sm:w-full">
             <div className=" items-center gap-2 flex">
               <p className="text-[#A4A4A4] text-[16px] font-[500]">Dashboard</p>
@@ -138,6 +139,7 @@ const AddNewCattle = () => {
               </p>
             </div>
             </div>
+            
           </div>
           <div className="flex gap-2 ml-auto">
             <div

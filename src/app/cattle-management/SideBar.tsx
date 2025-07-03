@@ -56,7 +56,7 @@ const Sidebar = () => {
           </p>
         </Link>
 
-        <Link href="/cattle-management" className="flex items-center gap-2">
+        <Link href="/milk-production" className="flex items-center gap-2">
           <Image src={milkProduction} alt="milkProduction" width={18} className="h-auto" />
           <p className={`text-sm font-dmSans ${isActive("/milk-production") ? "text-primary" : "text-heading"}`}>
             Milk Production

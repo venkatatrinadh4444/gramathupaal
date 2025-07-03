@@ -21,7 +21,7 @@ export const UserContextProvider = ({
     "/login",
     "/forgot-password",
     "/forgot-password/verify-otp",
-    "/reset-password",
+    "/forgot-password/verify-otp/reset-password",
   ];
 
 

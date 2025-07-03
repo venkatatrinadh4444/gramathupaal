@@ -17,7 +17,6 @@ const LeftSide = ({ cattleDetails , onOpenFeed , onOpenClafHistory , onOpenMilkH
 
   return (
     <>
-    <div>
       {images.length > 0 && <ImageSlider images={images} />}
       <div className="grid grid-cols-2 gap-3 mt-3">
         <div className="bg-[#F6F6F6] p-4 rounded-lg">
@@ -81,7 +80,6 @@ const LeftSide = ({ cattleDetails , onOpenFeed , onOpenClafHistory , onOpenMilkH
           </p>
         </div>
       </div>
-    </div>
     </>
   );
 };

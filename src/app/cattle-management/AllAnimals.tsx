@@ -12,7 +12,6 @@ import lowerExceptFirst from "../common/lowerExceptFirst";
 import { useRouter } from "next/navigation";
 import rightClick from "@/assets/pagination-right.png";
 import leftClick from "@/assets/pagination-left.png";
-import whiteDropDown from "@/assets/white-drop-down.png";
 import whitePlus from "@/assets/white-plus.png";
 import axios from "axios";
 
@@ -40,10 +39,31 @@ type Animal = {
   totalPages: number;
 };
 
+const breeds = [
+  "COW",
+  "BUFFALO",
+  "GOAT",
+  "KARAMPASU",
+  "KANNI_ADU",
+  "SALEM_BLACK",
+  "TELLICHERRY",
+  "KANGAYAM",
+  "UMBLACHERY",
+  "BARGUR",
+  "HALLIKAR",
+  "ONGOLE",
+  "MURRAH",
+  "SURTI",
+  "MEHSANA",
+  "LOCAL_NON_DESCRIPT",
+];
+
 const AllAnimals = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
   const [animalsData, setAnimalData] = useState([]) as any;
   const [page, setPage] = useState(1);
+  const [sortByValue, setSortByValue] = useState("");
+  const [filterValue,setFilterValue]=useState("")
 
   const router = useRouter();
 
@@ -72,58 +92,121 @@ const AllAnimals = () => {
       .catch(() => router.replace("/login"));
   }, [page]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [sortByValue,filterValue]);
+
+  const fetchSortData = () => {
+    axios
+      .get(
+        `${API_URI}/api/dashboard/animal/all-animals/${page}?sortBy=${sortByValue}`,
+        { withCredentials: true }
+      )
+      .then((res) => setAnimalData(res?.data?.allCattles))
+      .catch((err) => console.log(err));
+  };
+
+  const fetchFilterData = () => {
+    axios
+      .get(
+        `${API_URI}/api/dashboard/animal/all-animals/${page}?filter=${filterValue}`,
+        { withCredentials: true }
+      )
+      .then((res) => setAnimalData(res?.data?.allCattles))
+      .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    fetchSortData();
+  }, [page, sortByValue]);
+
+  useEffect(()=> {
+    fetchFilterData()
+  },[page,filterValue])
+
+
+
   return (
-    <div className="rounded-[20px] bg-white py-6 mx-4 my-4">
-      <div className="flex justify-between lg:items-end flex-col lg:flex-row items-start gap-4 lg:gap-0 md:mx-8 mx-4">
-        <div>
+    <div className="rounded-[20px] bg-white py-6 mx-4 my-4 overflow-hidden">
+      <div className="flex justify-between lg:items-end flex-col xl:flex-row items-start gap-4 xl:gap-0 md:mx-8 mx-4">
+        <div className="mr-auto">
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
             Cattle Management
           </h1>
-          <div className="flex gap-2 items-center">
-            <p className="text-para text-[16px] font-[500]">Dashboard</p>
-            <Image src={arrow} alt="arrow" className="w-4 h-auto" />
-            <p className="text-primary text-[16px] font-[500]">
-              Cattle Management
-            </p>
+          <div className="overflow-x-auto">
+            <div className="flex gap-2 items-center">
+              <p className="text-para text-[16px] font-[500]">Dashboard</p>
+              <Image src={arrow} alt="arrow" className="w-4 h-auto" />
+              <p className="text-primary text-[16px] font-[500] text-nowrap">
+                Cattle Management
+              </p>
+            </div>
           </div>
         </div>
         <div className="flex gap-3 items-end cattle-management-options">
-          <div className="border border-para flex gap-2 items-center rounded-lg py-[9.5px] px-3.5 justify-between">
+          {/* sort data */}
+          <div className="border border-para flex gap-2 items-center rounded-lg py-[9.5px] px-2.5 justify-center">
             <Image
               src={sortByImg}
               alt="sort-image"
               width={20}
               className="h-auto"
             />
-            <p className="text-sm text-para font-[500]">Sort By </p>
-            <Image
+            <select
+              className="border-none text-sm text-para font-[500] p-0 cursor-pointer text-center w-full outline-none"
+              onChange={(e) => setSortByValue(e.target.value)}
+            >
+              <option value="name-asc">Ascending Order</option>
+              <option value="name-desc">Descending Order</option>
+              <option value="newest">Recently Added</option>
+              <option value="oldest">Oldest Added</option>
+            </select>
+            {/*  <Image
               src={dropDown}
               alt="drop-down"
               width={20}
               className="h-auto"
-            />
+            /> */}
           </div>
-          <div className="flex gap-2 items-center rounded-lg py-2.5 px-3.5 bg-[#4A4A4A] text-white justify-between">
+
+          {/* Filter data */}
+          <div className="flex gap-2 items-center rounded-lg py-2.5 px-2.5 bg-[#4A4A4A] justify-between cursor-pointer">
             <Image
               src={filterImg}
               alt="sort-image"
               width={20}
               className="h-auto"
             />
-            <p className="text-sm text-white font-[500]">Filter</p>
-            <Image
+            <select className="text-sm font-[500] border-none p-0 bg-transparent text-white w-full text-center cursor-pointer " onChange={(e)=>setFilterValue(e.target.value)}>
+              {breeds.map((eachBreed) => {
+                return (
+                  <option
+                    key={eachBreed}
+                    value={eachBreed}
+                    className="bg-[#4A4A4A] text-white"
+                  >
+                    {eachBreed}
+                  </option>
+                );
+              })}
+            </select>
+            {/*  <Image
               src={whiteDropDown}
               alt="drop-down"
               width={20}
               className="h-auto"
-            />
+            /> */}
           </div>
+
+          {/* add new cattle */}
           <div
             className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-2.5 px-3.5 justify-center"
             onClick={() => router.push("/cattle-management/add-new-cattle")}
           >
             <Image src={whitePlus} alt="add" width={20} className="h-auto" />
-            <p className="text-sm text-white font-[500]">Add Cattle</p>
+            <p className="text-sm text-white font-[500] text-nowrap">
+              Add Cattle
+            </p>
           </div>
         </div>
       </div>
@@ -223,7 +306,7 @@ const AllAnimals = () => {
       </div>
 
       {/*  Pagination */}
-      <div className="flex justify-between items-center mt-3 mx-4">
+      <div className="flex justify-between gap-2 flex-col sm:flex-row mt-3 mx-4 items-center">
         <p className="text-sm">
           Showing 1 to 25 of {animalsData?.[0]?.totalAnimalCount} entries
         </p>
@@ -231,7 +314,7 @@ const AllAnimals = () => {
           <button
             onClick={() => setPage(page - 1)}
             className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:cursor-auto"
-            disabled={page===1}
+            disabled={page === 1}
           >
             <Image src={leftClick} alt="left" className="w-[8px] h-auto" />
           </button>
@@ -253,7 +336,7 @@ const AllAnimals = () => {
           <button
             onClick={() => setPage(page + 1)}
             className="cursor-pointer border-para rounded-[8px] border px-2 py-1 disabled:cursor-auto"
-            disabled={page===animalsData?.[0]?.totalPages}
+            disabled={page === animalsData?.[0]?.totalPages}
           >
             <Image src={rightClick} alt="left" className="w-[8px] h-auto" />
           </button>
