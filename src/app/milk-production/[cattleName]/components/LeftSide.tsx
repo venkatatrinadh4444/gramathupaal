@@ -10,7 +10,7 @@ import feedDetails from "@/assets/feed-details.png";
 import pregencies from "@/assets/pregencies.png";
 import { format, parseISO } from "date-fns";
 
-const LeftSide = ({ cattleDetails , onOpenFeed , onOpenClafHistory , onOpenMilkHistory , onOpenVaccinationHistory }: { cattleDetails: any , onOpenFeed:()=>void , onOpenClafHistory: ()=>void , onOpenMilkHistory:()=>void , onOpenVaccinationHistory:()=>void }) => {
+const LeftSide = ({ cattleDetails }: { cattleDetails: any }) => {
   const images: string[] = [];
   images.push(cattleDetails?.image1);
   images.push(cattleDetails?.image2);

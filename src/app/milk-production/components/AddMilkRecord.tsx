@@ -6,15 +6,59 @@ import { useRouter } from "next/navigation";
 import cross from "@/assets/animal-detail-cross.png";
 import tick from "@/assets/animal-detail-tick.png";
 import darkCross from '@/assets/cross-dark.png'
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
+export default function AddMilkRecord({onAddMilk }:{onAddMilk:()=>void }) {
+  const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
   const router = useRouter();
+
+  const [cattleNames,setCattleNames]=useState([])
+  const [data,setData]=useState({
+    date:'',
+    cattleId:cattleNames?.[0],
+    milkGrade:'A1',
+    morningMilk:'',
+    afternoonMilk:'',
+    eveningMilk:''
+  })
+
+  useEffect(()=> {
+    setData({...data,cattleId:cattleNames?.[0]})
+  },[cattleNames])
+
+
+  const fetchingCattleNames=()=> {
+    axios.get(`${API_URI}/api/dashboard/animal/all-cattle-names`,{withCredentials:true}).then(res=>{
+        const allCattleNames=res?.data?.allCattlesIds
+        setCattleNames(allCattleNames.map((item:any)=>item.cattleName))
+    }).catch(err=>console.log(err))
+  }
+
+  useEffect(()=> {
+    fetchingCattleNames()
+  },[])
+
+  const inputChangeHandler=(e:React.ChangeEvent<HTMLInputElement>)=> {
+    setData({...data,[e.target.name]:e.target.value})
+  }
+
+  const selectChangeHandler=(e:React.ChangeEvent<HTMLSelectElement>) => {
+    setData({...data,[e.target.name]:e.target.value})
+  }
+
+  const submitHandler=(e:React.FormEvent<HTMLFormElement>)=> {
+    e.preventDefault()
+    axios.post(`${API_URI}/api/dashboard/milk/add-new`,data,{withCredentials:true}).then(res=>console.log(res)).catch(err=>console.log(err))
+  }
+
+
   return (
     <>
     <div className="flex justify-between items-start">
       <div className="w-[90%]">
         <h1 className="font-dmSans text-[20px] text-heading font-[600]">
-          Add New Cattle
+          Add Milk Production
         </h1>
         {/* Naviagation menu */}
 
@@ -24,7 +68,7 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
             <Image src={arrow} alt="arrow" className="w-4 h-auto" />
             <p
               className="text-[#A4A4A4] text-[16px] font-[500] hover:text-primary cursor-pointer"
-              onClick={() => router.push("/cattle-management")}
+              onClick={() => router.push("/milk-production")}
             >
               Milk Production Record
             </p>
@@ -55,7 +99,8 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
             id="date"
             type="date"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
-            placeholder="Select Date"
+            placeholder="Select Date" 
+            required name="date" value={data?.date} onChange={inputChangeHandler}
           />
         </div>
 
@@ -69,9 +114,13 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
           <select
             id="cattleId"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            required name="cattleId" value={data?.cattleId} onChange={selectChangeHandler}
           >
-            <option value="">Cow</option>
-            <option>Buffalo</option>
+            {cattleNames.length>0 && cattleNames.map(eachName=>{
+                return (
+                    <option key={eachName} value={eachName}>{eachName}</option>
+                )
+            })}
           </select>
         </div>
 
@@ -85,6 +134,7 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
           <select
             id="grade"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            required name="milkGrade" value={data?.milkGrade} onChange={selectChangeHandler}
           >
             <option value="">A1</option>
             <option value="">A2</option>
@@ -104,6 +154,7 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
             type="text"
             placeholder="Milk Litres"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            required name="morningMilk" value={data?.morningMilk} onChange={inputChangeHandler}
           />
         </div>
 
@@ -119,6 +170,7 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
             type="text"
             placeholder="Milk Litres"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            required name="afternoonMilk" value={data?.afternoonMilk} onChange={inputChangeHandler}
           />
         </div>
 
@@ -134,6 +186,7 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
             type="text"
             placeholder="Milk Litres"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            required name="eveningMilk" value={data?.eveningMilk} onChange={inputChangeHandler}
           />
         </div>
 
@@ -144,7 +197,7 @@ export default function AddMilkRecord({onAddMilk}:{onAddMilk:()=>void}) {
 
       </div>
 
-      <form className="flex gap-2 justify-end">
+      <form className="flex gap-2 justify-end" onSubmit={submitHandler}>
             <div
               className="bg-[#4A4A4A] rounded-lg flex items-center px-2.5 cursor-pointer"
               onClick={onAddMilk}

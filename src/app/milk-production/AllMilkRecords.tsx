@@ -5,7 +5,7 @@ import Image from "next/image";
 import dropDown from "@/assets/sortDropDown.png";
 import filterImg from "@/assets/filterImg.png";
 import arrow from "@/assets/cattle-dashboard-arrow.png";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import rowDataArrow from "@/assets/row-data-arrow.png";
 import { format, parseISO } from "date-fns";
 import lowerExceptFirst from "../common/lowerExceptFirst";
@@ -16,7 +16,9 @@ import search from "@/assets/search.png";
 import whiteDropDown from "@/assets/white-drop-down.png";
 import whitePlus from "@/assets/white-plus.png";
 import axios from "axios";
-import AddMilkRecord from "./add-milk-record/page";
+import AddMilkRecord from "./components/AddMilkRecord";
+
+const breeds = ["COW", "BUFFALO", "GOAT"];
 
 const AllMilkRecords = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
@@ -24,7 +26,29 @@ const AllMilkRecords = () => {
   const [milkOverview, setMilkOverview] = useState({}) as any;
 
   const [allRecords, setAllRecords] = useState([]);
-  const [showAddMilk,setShowAddMilk] = useState(false)
+  const [showAddMilk, setShowAddMilk] = useState(false);
+  const [sortByValue, setSortByValue] = useState("");
+  const [filterValue, setFilterValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
+
+  // sortBy and filter options
+  const selectRef = useRef<HTMLSelectElement>(null);
+  const filterSelectRef = useRef<HTMLSelectElement>(null);
+
+  const handleLabelClick = () => {
+    // Try to trigger click/focus
+    if (selectRef.current) {
+      selectRef.current.focus(); // triggers focus
+      selectRef.current.click(); // helps on some browsers like Safari
+    }
+  };
+
+  const handleFilterClick = () => {
+    if (filterSelectRef.current) {
+      filterSelectRef.current.focus();
+      filterSelectRef.current.click();
+    }
+  };
 
   const router = useRouter();
 
@@ -58,6 +82,63 @@ const AllMilkRecords = () => {
       .catch((err) => console.log(err));
   }, [page]);
 
+  // Handling the sortby , filter and search along with pagination
+
+  useEffect(() => {
+    setPage(1);
+  }, [sortByValue, filterValue, searchValue]);
+
+  const fetchSortData = () => {
+    axios
+      .get(
+        `${API_URI}/api/dashboard/milk/all-milk-records/${page}?sortBy=${sortByValue}`,
+        { withCredentials: true }
+      )
+      .then((res) => {
+        setMilkOverview(res?.data?.milkOverview);
+        setAllRecords(res?.data?.milkOverview?.allRecords);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const fetchFilterData = () => {
+    axios
+      .get(
+        `${API_URI}/api/dashboard/milk/all-milk-records/${page}?filter=${filterValue}`,
+        { withCredentials: true }
+      )
+      .then((res) => {
+        setMilkOverview(res?.data?.milkOverview);
+        setAllRecords(res?.data?.milkOverview?.allRecords);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const fetchSearchedData = () => {
+    axios
+      .get(
+        `${API_URI}/api/dashboard/milk/all-milk-records/${page}?search=${searchValue}`,
+        { withCredentials: true }
+      )
+      .then((res) => {
+        setMilkOverview(res?.data?.milkOverview);
+        setAllRecords(res?.data?.milkOverview?.allRecords);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    fetchSortData();
+  }, [page, sortByValue]);
+
+  useEffect(() => {
+    fetchFilterData();
+  }, [page, filterValue]);
+
+  useEffect(() => {
+    fetchSearchedData();
+  }, [page, searchValue]);
+
   return (
     <div className="relative rounded-[20px] bg-white py-6 mx-4 my-4 overflow-hidden">
       <div className="flex justify-between xxl:items-end flex-col xxl:flex-row items-start gap-4 xxl:gap-0 xxl:mx-8 mx-4">
@@ -76,11 +157,14 @@ const AllMilkRecords = () => {
           </div>
         </div>
         <div className="flex gap-3 items-end milk-production-options">
+          {/* search option */}
           <div className="border border-para flex gap-2 items-center rounded-lg py-0.5 px-2 justify-between">
             <input
               type="text"
               placeholder="Search ID"
               className="border-none text-para text-sm w-full"
+              value={searchValue}
+              onChange={(e)=>setSearchValue(e.target.value)}
             />
             <Image
               src={search}
@@ -90,39 +174,83 @@ const AllMilkRecords = () => {
             />
           </div>
 
-          <div className="border border-para flex gap-2 items-center rounded-lg py-[9.5px] px-3.5 justify-between">
-            <Image
-              src={sortByImg}
-              alt="sort-image"
-              width={20}
-              className="h-auto"
-            />
-            <p className="text-sm text-para font-[500]">Sort By </p>
-            <Image
-              src={dropDown}
-              alt="drop-down"
-              width={20}
-              className="h-auto"
-            />
+          {/* sortBy option */}
+          <div className="relative inline-block">
+            <label
+              htmlFor="sortBy"
+              onClick={handleLabelClick}
+              className="border border-para flex gap-2 justify-between items-center rounded-lg py-[9.5px] px-2.5 cursor-pointer"
+            >
+              <Image
+                src={sortByImg}
+                alt="sort-image"
+                width={20}
+                className="h-auto"
+              />
+              <p className="font-[500] text-sm text-para">Sort By</p>
+              <Image
+                src={dropDown}
+                alt="drop-down"
+                width={20}
+                className="h-auto"
+              />
+            </label>
+
+            <select
+              ref={selectRef}
+              id="sortBy"
+              className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
+              onChange={(e) => setSortByValue(e.target.value)}
+            >
+              <option value="name-asc">Ascending Order</option>
+              <option value="name-desc">Descending Order</option>
+              <option value="newest">Recently Added</option>
+              <option value="oldest">Oldest Added</option>
+            </select>
           </div>
-          <div className="flex gap-2 items-center rounded-lg py-2.5 px-3.5 bg-[#4A4A4A] text-white justify-between">
-            <Image
-              src={filterImg}
-              alt="sort-image"
-              width={20}
-              className="h-auto"
-            />
-            <p className="text-sm text-white font-[500]">Filter</p>
-            <Image
-              src={whiteDropDown}
-              alt="drop-down"
-              width={20}
-              className="h-auto"
-            />
+
+          {/* filter option */}
+          <div className="relative">
+            <label
+              onClick={handleFilterClick}
+              className="flex gap-2 items-center rounded-lg py-[9px] px-2.5 bg-[#4A4A4A] justify-between cursor-pointer"
+            >
+              <Image
+                src={filterImg}
+                alt="filter-image"
+                width={20}
+                className="h-auto"
+              />
+              <p className="font-[500] text-white">Filter</p>
+              <Image
+                src={whiteDropDown}
+                alt="drop-down"
+                width={20}
+                className="h-auto"
+              />
+            </label>
+
+            <select
+              ref={filterSelectRef}
+              className="absolute top-0 left-0 opacity-0 w-full h-full cursor-pointer"
+              onChange={(e) => setFilterValue(e.target.value)}
+            >
+              {breeds.map((eachBreed) => (
+                <option
+                  key={eachBreed}
+                  value={eachBreed}
+                  className="bg-[#4A4A4A] text-white"
+                >
+                  {eachBreed}
+                </option>
+              ))}
+            </select>
           </div>
+
+          {/* add milk record */}
           <div
-            className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-2.5 px-3.5 justify-center"
-            onClick={()=>setShowAddMilk(true)}
+            className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center"
+            onClick={() => setShowAddMilk(true)}
           >
             <Image src={whitePlus} alt="add" width={20} className="h-auto" />
             <p className="text-sm text-white font-[500]">Add Milk Record</p>
@@ -260,7 +388,7 @@ const AllMilkRecords = () => {
       {showAddMilk && (
         <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[50%] xl:w-[55%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden sm:p-10 p-6">
-            <AddMilkRecord onAddMilk={()=>setShowAddMilk(false)}/>
+            <AddMilkRecord onAddMilk={() => setShowAddMilk(false)} />
           </div>
         </div>
       )}
