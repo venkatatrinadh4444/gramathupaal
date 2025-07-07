@@ -242,7 +242,7 @@ const AllAnimals = () => {
             className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center"
             onClick={() => router.push("/cattle-management/add-new-cattle")}
           >
-            <Image src={whitePlus} alt="add" width={20} className="h-auto" />
+            <Image src={whitePlus} alt="add" className="w-[20px] h-auto" />
             <p className="text-sm text-white font-[500] text-nowrap">
               Add Cattle
             </p>
@@ -267,80 +267,81 @@ const AllAnimals = () => {
           </div>
 
           {/* Data row */}
-
-          {animalsData?.length > 0 &&
-            animalsData?.map((eachAnimal: Animal) => {
-              return (
-                <div key={eachAnimal.id}>
-                  <div
-                    className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center mx-6"
-                    key={eachAnimal.id}
-                  >
-                    <div className="w-10 h-10 rounded-[50%] overflow-hidden flex object-cover">
-                      <Image
-                        src={eachAnimal.image1}
-                        width={100}
-                        height={100}
-                        alt="image1"
-                        className="object-cover rounded-[50%]"
-                      />
-                    </div>
-
-                    <p className="text-[#4A4A4A]">
-                      {lowerExceptFirst(eachAnimal.type)}
-                    </p>
-                    <p className="text-[#4A4A4A]">
-                      {"#" + eachAnimal.cattleName}
-                    </p>
-                    <p className="text-[#4A4A4A]">
-                      {format(parseISO(eachAnimal.birthDate), "MMM dd, yyyy")}
-                    </p>
-                    <p className="text-[#4A4A4A] ">
-                      {lowerExceptFirst(eachAnimal.breed)}
-                    </p>
-                    <p className="pl-2">
-                      <span
-                        className={`text-[12px] rounded-full w-fit px-4 py-2 ${
-                          eachAnimal.healthStatus === "HEALTHY"
-                            ? "bg-[#00897B] text-white"
-                            : "bg-[#FBC02D] text-black"
-                        }`}
-                      >
-                        {lowerExceptFirst(eachAnimal.healthStatus)}
-                      </span>
-                    </p>
-
-                    <p className="text-[#4A4A4A] ">{eachAnimal.weight}</p>
-                    <div className="flex items-center ">
-                      <p className="text-[#4A4A4A]">
-                        {eachAnimal?.averageMilk?.toString().slice(0, 4)}
-                      </p>
-                      <p className="text-green-600 text-xs">+18.3%</p>
-                    </div>
+          <div className="h-[58vh] overflow-y-auto">
+            {animalsData?.length > 0 &&
+              animalsData?.map((eachAnimal: Animal) => {
+                return (
+                  <div key={eachAnimal.id}>
                     <div
-                      className="flex justify-center"
-                      onClick={() =>
-                        router.push(
-                          `cattle-management/${eachAnimal.cattleName}`
-                        )
-                      }
+                      className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center mx-6"
+                      key={eachAnimal.id}
                     >
-                      <button className="bg-[#0E9347] rounded px-1 py-1">
+                      <div className="w-10 h-10 rounded-[50%] overflow-hidden flex object-cover">
                         <Image
-                          src={rowDataArrow}
-                          alt="arrow"
-                          width={18}
-                          height={18}
+                          src={eachAnimal.image1}
+                          width={100}
+                          height={100}
+                          alt="image1"
+                          className="object-cover rounded-[50%]"
                         />
-                      </button>
+                      </div>
+
+                      <p className="text-[#4A4A4A]">
+                        {lowerExceptFirst(eachAnimal.type)}
+                      </p>
+                      <p className="text-[#4A4A4A]">
+                        {"#" + eachAnimal.cattleName}
+                      </p>
+                      <p className="text-[#4A4A4A]">
+                        {format(parseISO(eachAnimal.birthDate), "MMM dd, yyyy")}
+                      </p>
+                      <p className="text-[#4A4A4A] ">
+                        {lowerExceptFirst(eachAnimal.breed)}
+                      </p>
+                      <p className="pl-2">
+                        <span
+                          className={`text-[12px] rounded-full w-fit px-4 py-2 ${
+                            eachAnimal.healthStatus === "HEALTHY"
+                              ? "bg-[#00897B] text-white"
+                              : "bg-[#FBC02D] text-black"
+                          }`}
+                        >
+                          {lowerExceptFirst(eachAnimal.healthStatus)}
+                        </span>
+                      </p>
+
+                      <p className="text-[#4A4A4A] ">{eachAnimal.weight}</p>
+                      <div className="flex items-center ">
+                        <p className="text-[#4A4A4A]">
+                          {eachAnimal?.averageMilk?.toString().slice(0, 4)}
+                        </p>
+                        <p className="text-green-600 text-xs">+18.3%</p>
+                      </div>
+                      <div
+                        className="flex justify-center"
+                        onClick={() =>
+                          router.push(
+                            `cattle-management/${eachAnimal.cattleName}`
+                          )
+                        }
+                      >
+                        <button className="bg-[#0E9347] rounded px-1 py-1">
+                          <Image
+                            src={rowDataArrow}
+                            alt="arrow"
+                            width={18}
+                            height={18}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <hr className="border border-para opacity-20 rounded-lg" />
                     </div>
                   </div>
-                  <div className="w-full">
-                    <hr className="border border-para opacity-20 rounded-lg" />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
       </div>
 

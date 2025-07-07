@@ -21,7 +21,7 @@ const ImageSlider = ({ images }: Props) => {
   return (
     <div className="relative w-full max-w-3xl">
       {/* Carousel Wrapper */}
-      <div className="relative w-full h-64 sm:h-56 md:h-56 overflow-hidden rounded-xl">
+      <div className="relative w-full h-64 sm:h-96 md:h-56 overflow-hidden rounded-xl">
         {images.length>0 && images.map((src, index) => (
           <div
             key={index}
@@ -44,7 +44,7 @@ const ImageSlider = ({ images }: Props) => {
       {/* Controls */}
       <button
         onClick={prevSlide}
-        className="absolute top-1/2 left-4 transform -translate-y-1/2 z-10 bg-[#3B3B3B73] hover:bg-white/70 rounded-md p-2"
+        className="absolute top-1/2 left-4 transform -translate-y-1/2 z-10 bg-[#3B3B3B73] hover:bg-white/70 rounded-md p-2 h-auto"
       >
         <svg className="w-5 h-4 text-white hover:text-black" viewBox="0 0 6 10" fill="none">
           <path

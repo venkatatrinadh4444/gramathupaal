@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Image from "next/image";
-import { useParams } from "next/navigation";
 import leftArrow from "@/assets/leftArrow.png";
 import eyeOpen from "@/assets/eye-open.png";
 import eyeClose from "@/assets/eye-close.png";
@@ -26,10 +25,12 @@ const NewPasswordPage = () => {
 
   const { email } = useContextData() as any;
 
-  if(!email) {
-    router.push('/forgot-password')
-  }
-
+  useEffect(()=> {
+    if(!email) {
+      router.push('/forgot-password')
+    }
+  },[email])
+  
   const [data, setData] = useState({
     password: "",
     confirmPassword: "",
@@ -156,8 +157,8 @@ const NewPasswordPage = () => {
           </div>
           <div>
             <p
-              className="text-sm underline text-green-400 cursor-pointer"
-              onClick={() => router.push("/")}
+              className="text-sm underline text-primary cursor-pointer"
+              onClick={() => router.push("/login")}
             >
               Login
             </p>
@@ -239,23 +240,3 @@ const NewPasswordPage = () => {
 };
 
 export default NewPasswordPage;
-
-{
-  /* <div className="flex h-[100vh] items-center md:gap-4">
-      <div className="flex-1 hidden md:block">
-        <Image
-          src={loginSideImg}
-          alt="loginLogo"
-          className="h-[100vh] object-cover w-auto"
-        />
-      </div>
-      <div className="flex-1 sm:p-0 xm:p-4 md:pr-4">
-        <div className="w-[406px] m-auto">
-          <div className="flex justify-center">
-            <Image src={logo} alt="logo" className="w-[232px] h-[58px]" />
-          </div>
-          
-        </div>
-      </div>
-    </div> */
-}

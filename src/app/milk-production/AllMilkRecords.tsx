@@ -5,7 +5,7 @@ import Image from "next/image";
 import dropDown from "@/assets/sortDropDown.png";
 import filterImg from "@/assets/filterImg.png";
 import arrow from "@/assets/cattle-dashboard-arrow.png";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import rowDataArrow from "@/assets/row-data-arrow.png";
 import { format, parseISO } from "date-fns";
 import lowerExceptFirst from "../common/lowerExceptFirst";
@@ -70,16 +70,20 @@ const AllMilkRecords = () => {
     return Array.from(new Set(visiblePages)).sort((a, b) => a - b);
   };
 
-  useEffect(() => {
+  const fetchingAllMilkRecords=()=> {
     axios
-      .get(`${API_URI}/api/dashboard/milk/all-milk-records/${page}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        setMilkOverview(res?.data?.milkOverview);
-        setAllRecords(res?.data?.milkOverview?.allRecords);
-      })
-      .catch((err) => console.log(err));
+    .get(`${API_URI}/api/dashboard/milk/all-milk-records/${page}`, {
+      withCredentials: true,
+    })
+    .then((res) => {
+      setMilkOverview(res?.data?.milkOverview);
+      setAllRecords(res?.data?.milkOverview?.allRecords);
+    })
+    .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    fetchingAllMilkRecords()
   }, [page]);
 
   // Handling the sortby , filter and search along with pagination
@@ -164,7 +168,7 @@ const AllMilkRecords = () => {
               placeholder="Search ID"
               className="border-none text-para text-sm w-full"
               value={searchValue}
-              onChange={(e)=>setSearchValue(e.target.value)}
+              onChange={(e) => setSearchValue(e.target.value)}
             />
             <Image
               src={search}
@@ -252,7 +256,7 @@ const AllMilkRecords = () => {
             className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center"
             onClick={() => setShowAddMilk(true)}
           >
-            <Image src={whitePlus} alt="add" width={20} className="h-auto" />
+            <Image src={whitePlus} alt="add" className="w-[20px] h-auto" />
             <p className="text-sm text-white font-[500]">Add Milk Record</p>
           </div>
         </div>
@@ -275,73 +279,74 @@ const AllMilkRecords = () => {
           </div>
 
           {/* Data row */}
-
-          {allRecords?.length > 0 &&
-            allRecords?.map((eachRecord: any) => {
-              return (
-                <div key={eachRecord.id}>
-                  <div
-                    className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center mx-6 gap-3"
-                    key={eachRecord.id}
-                  >
-                    <div className="w-10 h-10 rounded-[50%]overflow-hidden flex object-cover">
-                      <Image
-                        src={eachRecord?.cattle?.image1}
-                        width={100}
-                        height={100}
-                        alt="image1"
-                        className="object-cover rounded-[50%]"
-                      />
-                    </div>
-
-                    <p className="text-[#4A4A4A]">
-                      {lowerExceptFirst(eachRecord?.cattle?.type)}
-                    </p>
-                    <p className="text-[#4A4A4A]">
-                      {"#" + eachRecord?.cattle?.cattleName}
-                    </p>
-                    <p className="text-[#4A4A4A] ">
-                      {format(parseISO(eachRecord.date), "MMM dd, yyyy")}
-                    </p>
-                    <p className="text-[#4A4A4A] text-center">
-                      {lowerExceptFirst(eachRecord.morningMilk)}
-                    </p>
-                    <p className="text-[#4A4A4A] text-center">
-                      {lowerExceptFirst(eachRecord.afternoonMilk)}
-                    </p>
-
-                    <p className="text-[#4A4A4A] text-center">
-                      {eachRecord.eveningMilk}
-                    </p>
-
-                    <p className="text-[#4A4A4A] text-center">
-                      {eachRecord.milkGrade}
-                    </p>
-
+          <div className="h-[58vh] overflow-y-auto">
+            {allRecords?.length > 0 &&
+              allRecords?.map((eachRecord: any) => {
+                return (
+                  <div key={eachRecord.id}>
                     <div
-                      className="flex justify-center"
-                      onClick={() =>
-                        router.push(
-                          `milk-production/${eachRecord?.cattle?.cattleName}`
-                        )
-                      }
+                      className="grid grid-cols-[2fr_3fr_4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center mx-6 gap-3"
+                      key={eachRecord.id}
                     >
-                      <button className="bg-[#0E9347] rounded px-1 py-1">
+                      <div className="w-10 h-10 rounded-[50%] overflow-hidden flex object-cover">
                         <Image
-                          src={rowDataArrow}
-                          alt="arrow"
-                          width={18}
-                          height={18}
+                          src={eachRecord?.cattle?.image1}
+                          width={100}
+                          height={100}
+                          alt="image1"
+                          className="object-cover rounded-[50%]"
                         />
-                      </button>
+                      </div>
+
+                      <p className="text-[#4A4A4A]">
+                        {lowerExceptFirst(eachRecord?.cattle?.type)}
+                      </p>
+                      <p className="text-[#4A4A4A]">
+                        {"#" + eachRecord?.cattle?.cattleName}
+                      </p>
+                      <p className="text-[#4A4A4A] ">
+                        {format(parseISO(eachRecord.date), "MMM dd, yyyy")}
+                      </p>
+                      <p className="text-[#4A4A4A]">
+                        {lowerExceptFirst(eachRecord.morningMilk)}
+                      </p>
+                      <p className="text-[#4A4A4A]">
+                        {lowerExceptFirst(eachRecord.afternoonMilk)}
+                      </p>
+
+                      <p className="text-[#4A4A4A]">
+                        {eachRecord.eveningMilk}
+                      </p>
+
+                      <p className="text-[#4A4A4A] text-center">
+                        {eachRecord.milkGrade}
+                      </p>
+
+                      <div
+                        className="flex justify-center"
+                        onClick={() =>
+                          router.push(
+                            `milk-production/${eachRecord?.cattle?.cattleName}`
+                          )
+                        }
+                      >
+                        <button className="bg-[#0E9347] rounded px-1 py-1">
+                          <Image
+                            src={rowDataArrow}
+                            alt="arrow"
+                            width={18}
+                            height={18}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <hr className="border border-para opacity-20 rounded-lg" />
                     </div>
                   </div>
-                  <div className="w-full">
-                    <hr className="border border-para opacity-20 rounded-lg" />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
       </div>
 
@@ -388,7 +393,7 @@ const AllMilkRecords = () => {
       {showAddMilk && (
         <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[50%] xl:w-[55%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden sm:p-10 p-6">
-            <AddMilkRecord onAddMilk={() => setShowAddMilk(false)} />
+            <AddMilkRecord onAddMilk={() => setShowAddMilk(false)} fetchAllMilkRecords={()=>fetchingAllMilkRecords()} />
           </div>
         </div>
       )}

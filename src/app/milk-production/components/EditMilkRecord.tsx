@@ -11,10 +11,12 @@ import axios from "axios";
 
 export default function EditMilkRecord({
   onEditMilk,
-  editRecordData
+  editRecordData,
+  fetchingAfterAddingNewMilkRecord
 }: {
   onEditMilk: () => void;
-  editRecordData:any
+  editRecordData:any;
+  fetchingAfterAddingNewMilkRecord:()=>void
 }) {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
   const router = useRouter();
@@ -44,7 +46,10 @@ export default function EditMilkRecord({
       .put(`${API_URI}/api/dashboard/milk/update-specific-record/${editRecordData?.id}`, data, {
         withCredentials: true,
       })
-      .then((res) => console.log(res))
+      .then((res) =>{
+        fetchingAfterAddingNewMilkRecord()
+        onEditMilk()
+      })
       .catch((err) => console.log(err));
   };
 
@@ -95,7 +100,7 @@ export default function EditMilkRecord({
           <input
             id="date"
             type="date"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             placeholder="Select Date"
             required
             name="date"
@@ -113,7 +118,7 @@ export default function EditMilkRecord({
           </label>
           <select
             id="cattleId"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required
             disabled
           >
@@ -130,7 +135,7 @@ export default function EditMilkRecord({
           </label>
           <select
             id="grade"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required
             name="milkGrade"
             value={data?.milkGrade}
@@ -138,7 +143,8 @@ export default function EditMilkRecord({
           >
             <option value="">A1</option>
             <option value="">A2</option>
-            <option value="">A3</option>
+            <option value="OneCowA1">OneCowA1</option>
+            <option value="OneCowA2">OneCowA2</option>
           </select>
         </div>
 
@@ -153,7 +159,7 @@ export default function EditMilkRecord({
             id="morning-milk"
             type="text"
             placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required
             name="morningMilk"
             value={data?.morningMilk}
@@ -172,7 +178,7 @@ export default function EditMilkRecord({
             id="afternoon-milk"
             type="text"
             placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required
             name="afternoonMilk"
             value={data?.afternoonMilk}
@@ -191,7 +197,7 @@ export default function EditMilkRecord({
             id="evening-milk"
             type="text"
             placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required
             name="eveningMilk"
             value={data?.eveningMilk}

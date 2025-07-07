@@ -16,9 +16,10 @@ import search from "@/assets/search.png";
 import whiteDropDown from "@/assets/white-drop-down.png";
 import whitePlus from "@/assets/white-plus.png";
 import axios from "axios";
-import AddMilkRecord from "../milk-production/components/AddMilkRecord";
+import AddFeedStockRecord from "./components/AddFeedStock";
+import ShowHistory from "./components/ShowHistory";
 
-const filterOptions = ["KG" , "PIECES" , "PACKETS"];
+const filterOptions = ["KG", "PIECES", "PACKETS"];
 
 const AllFeedStockRecords = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
@@ -76,11 +77,13 @@ const AllFeedStockRecords = () => {
         withCredentials: true,
       })
       .then((res) => {
-        setFeedOverview(res?.data?.allStockData)
-        setAllRecords(res?.data?.allStockData?.allRecords)
+        setFeedOverview(res?.data?.allStockData);
+        setAllRecords(res?.data?.allStockData?.allRecords);
       })
       .catch((err) => console.log(err));
   }, [page]);
+
+  console.log(allRecords);
 
   // Handling the sortby , filter and search along with pagination
 
@@ -95,8 +98,8 @@ const AllFeedStockRecords = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        setFeedOverview(res?.data?.allStockData)
-        setAllRecords(res?.data?.allStockData?.allRecords)
+        setFeedOverview(res?.data?.allStockData);
+        setAllRecords(res?.data?.allStockData?.allRecords);
       })
       .catch((err) => console.log(err));
   };
@@ -108,8 +111,8 @@ const AllFeedStockRecords = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        setFeedOverview(res?.data?.allStockData)
-        setAllRecords(res?.data?.allStockData?.allRecords)
+        setFeedOverview(res?.data?.allStockData);
+        setAllRecords(res?.data?.allStockData?.allRecords);
       })
       .catch((err) => console.log(err));
   };
@@ -121,8 +124,8 @@ const AllFeedStockRecords = () => {
         { withCredentials: true }
       )
       .then((res) => {
-        setFeedOverview(res?.data?.allStockData)
-        setAllRecords(res?.data?.allStockData?.allRecords)
+        setFeedOverview(res?.data?.allStockData);
+        setAllRecords(res?.data?.allStockData?.allRecords);
       })
       .catch((err) => console.log(err));
   };
@@ -144,14 +147,14 @@ const AllFeedStockRecords = () => {
       <div className="flex justify-between xxl:items-end flex-col xxl:flex-row items-start gap-4 xxl:gap-0 xxl:mx-8 mx-4">
         <div>
           <h1 className="font-dmSans text-[28px] text-[#4A4A4A] font-[600]">
-            Milk Production Record
+            Feed Stock Management
           </h1>
           <div className="overflow-x-auto">
             <div className="flex gap-2 items-center">
               <p className="text-[#A4A4A4] text-[16px] font-[500]">Dashboard</p>
               <Image src={arrow} alt="arrow" className="w-4 h-auto" />
               <p className="text-primary text-[16px] font-[500] text-nowrap">
-                Milk Production Record
+                Feed Stock Management
               </p>
             </div>
           </div>
@@ -164,7 +167,7 @@ const AllFeedStockRecords = () => {
               placeholder="Search ID"
               className="border-none text-para text-sm w-full"
               value={searchValue}
-              onChange={(e)=>setSearchValue(e.target.value)}
+              onChange={(e) => setSearchValue(e.target.value)}
             />
             <Image
               src={search}
@@ -252,7 +255,7 @@ const AllFeedStockRecords = () => {
             className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center"
             onClick={() => setShowAddMilk(true)}
           >
-            <Image src={whitePlus} alt="add" width={20} className="h-auto" />
+            <Image src={whitePlus} alt="add" className="w-[20px] h-auto" />
             <p className="text-sm text-white font-[500]">Add Milk Record</p>
           </div>
         </div>
@@ -262,7 +265,7 @@ const AllFeedStockRecords = () => {
       <div className="mt-6 overflow-x-auto">
         <div className="min-w-[900px] w-full">
           {/* Heading row */}
-          <div className="grid grid-cols-[4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-heading text-[16px] whitespace-nowrap rounded-2xl mx-4 gap-3 font-[500]">
+          <div className="grid grid-cols-[4fr_4fr_3fr_4fr_3fr_3fr_2fr] bg-[#F1F6F2] py-3 text-heading text-[16px] whitespace-nowrap rounded-2xl mx-4 gap-3 font-[500] px-4">
             <p>Stock Name</p>
             <p>Feed Type</p>
             <p>Quantity</p>
@@ -273,60 +276,53 @@ const AllFeedStockRecords = () => {
           </div>
 
           {/* Data row */}
-
-          {allRecords?.length > 0 &&
-            allRecords?.map((eachRecord: any) => {
-              return (
-                <div key={eachRecord.id}>
-                  <div
-                    className="grid grid-cols-[4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center mx-6 gap-3"
-                    key={eachRecord.id}
-                  >
-                    <p className="text-[#4A4A4A]">
-                      {"#" + eachRecord?.cattle?.cattleName}
-                    </p>
-                    <p className="text-[#4A4A4A] ">
-                      {format(parseISO(eachRecord.date), "MMM dd, yyyy")}
-                    </p>
-                    <p className="text-[#4A4A4A]">
-                      {lowerExceptFirst(eachRecord.morningMilk)}
-                    </p>
-                    <p className="text-[#4A4A4A]">
-                      {lowerExceptFirst(eachRecord.afternoonMilk)}
-                    </p>
-
-                    <p className="text-[#4A4A4A]">
-                      {eachRecord.eveningMilk}
-                    </p>
-
-                    <p className="text-[#4A4A4A]">
-                      {eachRecord.milkGrade}
-                    </p>
-
+          <div className="h-[60vh] overflow-y-auto">
+            {allRecords?.length > 0 &&
+              allRecords?.map((eachRecord: any) => {
+                return (
+                  <div key={eachRecord.id}>
                     <div
-                      className="flex justify-center"
-                      onClick={() =>
-                        router.push(
-                          `milk-production/${eachRecord?.cattle?.cattleName}`
-                        )
-                      }
+                      className="grid grid-cols-[4fr_4fr_3fr_4fr_3fr_3fr_2fr] py-3 text-[#4A4A4A] text-[14px] whitespace-nowrap items-center mx-4 gap-3 px-4"
+                      key={eachRecord.id}
                     >
-                      <button className="bg-[#0E9347] rounded px-1 py-1">
-                        <Image
-                          src={rowDataArrow}
-                          alt="arrow"
-                          width={18}
-                          height={18}
-                        />
-                      </button>
+                      <p className="text-[#4A4A4A]">{eachRecord?.name}</p>
+                      <p className="text-[#4A4A4A] ">
+                        {format(parseISO(eachRecord.date), "MMM dd, yyyy")}
+                      </p>
+                      <p className="text-[#4A4A4A]">{eachRecord?.quantity}</p>
+                      <p className="text-[#4A4A4A]">
+                        {format(parseISO(eachRecord.date), "MMM dd, yyyy")}
+                      </p>
+
+                      <p className="text-[#4A4A4A]">{eachRecord?.unit}</p>
+
+                      <p className="text-[#4A4A4A]">{eachRecord?.quantity}</p>
+
+                      <div
+                        className="flex justify-center"
+                        onClick={() =>
+                          router.push(
+                            `milk-production/${eachRecord?.cattle?.cattleName}`
+                          )
+                        }
+                      >
+                        <button className="bg-[#0E9347] rounded px-1 py-1">
+                          <Image
+                            src={rowDataArrow}
+                            alt="arrow"
+                            width={18}
+                            height={18}
+                          />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="w-full">
+                      <hr className="border border-para opacity-20 rounded-lg" />
                     </div>
                   </div>
-                  <div className="w-full">
-                    <hr className="border border-para opacity-20 rounded-lg" />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
       </div>
 
@@ -373,7 +369,8 @@ const AllFeedStockRecords = () => {
       {showAddMilk && (
         <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[50%] xl:w-[55%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden sm:p-10 p-6">
-            <AddMilkRecord onAddMilk={() => setShowAddMilk(false)} />
+           {/*  <AddFeedStockRecord onAddMilk={() => setShowAddMilk(false)} /> */}
+           <ShowHistory/>
           </div>
         </div>
       )}

@@ -9,11 +9,10 @@ import darkCross from '@/assets/cross-dark.png'
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:()=>void , cattleId:string}) {
+export default function DefaultAddMilkRecord({onAddMilk , cattleId , fetchingAfterAddingNewMilkRecord }:{onAddMilk:()=>void , cattleId:string , fetchingAfterAddingNewMilkRecord:()=>void}) {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
   const router = useRouter();
 
-  const [cattleNames,setCattleNames]=useState([])
   const [data,setData]=useState({
     date:'',
     cattleId:cattleId,
@@ -35,7 +34,10 @@ export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:
 
   const submitHandler=(e:React.FormEvent<HTMLFormElement>)=> {
     e.preventDefault()
-    axios.post(`${API_URI}/api/dashboard/milk/add-new`,data,{withCredentials:true}).then(res=>console.log(res)).catch(err=>console.log(err))
+    axios.post(`${API_URI}/api/dashboard/milk/add-new`,data,{withCredentials:true}).then(res=>{
+      fetchingAfterAddingNewMilkRecord()
+      onAddMilk()
+    }).catch(err=>console.log(err))
   }
 
 
@@ -84,7 +86,7 @@ export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:
           <input
             id="date"
             type="date"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             placeholder="Select Date" 
             required name="date" value={data?.date} onChange={inputChangeHandler}
           />
@@ -99,7 +101,7 @@ export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:
           </label>
           <select
             id="cattleId"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required disabled
           >
             <option value={cattleId}>{cattleId}</option>
@@ -115,12 +117,13 @@ export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:
           </label>
           <select
             id="grade"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required name="milkGrade" value={data?.milkGrade} onChange={selectChangeHandler}
           >
-            <option value="">A1</option>
-            <option value="">A2</option>
-            <option value="">A3</option>
+            <option value="A1">A1</option>
+            <option value="A2">A2</option>
+            <option value="OneCowA1">OneCowA1</option>
+            <option value="OneCowA2">OneCowA2</option>
           </select>
         </div>
 
@@ -135,7 +138,7 @@ export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:
             id="morning-milk"
             type="text"
             placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required name="morningMilk" value={data?.morningMilk} onChange={inputChangeHandler}
           />
         </div>
@@ -151,7 +154,7 @@ export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:
             id="afternoon-milk"
             type="text"
             placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required name="afternoonMilk" value={data?.afternoonMilk} onChange={inputChangeHandler}
           />
         </div>
@@ -167,7 +170,7 @@ export default function DefaultAddMilkRecord({onAddMilk , cattleId }:{onAddMilk:
             id="evening-milk"
             type="text"
             placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required name="eveningMilk" value={data?.eveningMilk} onChange={inputChangeHandler}
           />
         </div>

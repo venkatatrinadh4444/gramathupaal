@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 
-export default function AddMilkRecord({onAddMilk , fetchAllMilkRecords }:{onAddMilk:()=>void , fetchAllMilkRecords:()=>void }) {
+export default function AddFeedStockRecord({onAddMilk , fetchAllMilkRecords }:{onAddMilk:()=>void , fetchAllMilkRecords:()=>void }) {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
   const router = useRouter();
 
@@ -76,11 +76,11 @@ export default function AddMilkRecord({onAddMilk , fetchAllMilkRecords }:{onAddM
               className="text-[#A4A4A4] text-[16px] font-[500] hover:text-primary cursor-pointer"
               onClick={() => router.push("/milk-production")}
             >
-              Milk Production Record
+              Feed Stock Management
             </p>
             <Image src={arrow} alt="arrow" className="w-4 h-auto" />
             <p className="text-primary text-[16px] font-[500]">
-              Add Milk Production
+              Add Feed Item
             </p>
           </div>
         </div>
@@ -93,7 +93,28 @@ export default function AddMilkRecord({onAddMilk , fetchAllMilkRecords }:{onAddM
 
       {/* Input boxes */}
 
-      <div className="grid xl:grid-cols-3 sm:grid-cols-2 gap-x-[26px] sm:gap-y-[26px] gap-4 sm:my-8 my-4">
+      <div className="grid xl:grid-cols-2 sm:grid-cols-2 gap-x-[26px] sm:gap-y-[26px] gap-4 sm:mt-6 mt-4">
+
+      <div className="flex flex-col">
+          <label
+            htmlFor="cattleId"
+            className="font-dmSans font-[500] text-[16px] text-heading"
+          >
+            Feed Name
+          </label>
+          <select
+            id="cattleId"
+            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
+            required name="cattleId" value={data?.cattleId} onChange={selectChangeHandler}
+          >
+            {cattleNames.length>0 && cattleNames.map(eachName=>{
+                return (
+                    <option key={eachName} value={eachName}>{eachName}</option>
+                )
+            })}
+          </select>
+        </div>
+
         <div className="flex flex-col">
           <label
             htmlFor="date"
@@ -112,40 +133,19 @@ export default function AddMilkRecord({onAddMilk , fetchAllMilkRecords }:{onAddM
 
         <div className="flex flex-col">
           <label
-            htmlFor="cattleId"
-            className="font-dmSans font-[500] text-[16px] text-heading"
-          >
-            Cattle ID
-          </label>
-          <select
-            id="cattleId"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
-            required name="cattleId" value={data?.cattleId} onChange={selectChangeHandler}
-          >
-            {cattleNames.length>0 && cattleNames.map(eachName=>{
-                return (
-                    <option key={eachName} value={eachName}>{eachName}</option>
-                )
-            })}
-          </select>
-        </div>
-
-        <div className="flex flex-col">
-          <label
             htmlFor="grade"
             className="font-dmSans font-[500] text-[16px] text-heading"
           >
-            Milk Grade
+            Inventory Unit
           </label>
           <select
             id="grade"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
             required name="milkGrade" value={data?.milkGrade} onChange={selectChangeHandler}
           >
-            <option value="A1">A1</option>
-            <option value="A2">A2</option>
-            <option value="OneCowA1">OneCowA1</option>
-            <option value="OneCowA2">OneCowA2</option>
+            <option value="KG">KG</option>
+            <option value="PIECES">PIECES</option>
+            <option value="PACKETS">PACKETS</option>
           </select>
         </div>
 
@@ -154,7 +154,7 @@ export default function AddMilkRecord({onAddMilk , fetchAllMilkRecords }:{onAddM
             htmlFor="morning-milk"
             className="font-dmSans font-[500] text-[16px] text-heading"
           >
-            Morning Milk
+            Quantity
           </label>
           <input
             id="morning-milk"
@@ -165,43 +165,16 @@ export default function AddMilkRecord({onAddMilk , fetchAllMilkRecords }:{onAddM
           />
         </div>
 
-        <div className="flex flex-col">
-          <label
-            htmlFor="afternoon-milk"
+      </div>
+
+      <div className="flex flex-col my-[26px]">
+      <label
+            htmlFor="notes"
             className="font-dmSans font-[500] text-[16px] text-heading"
           >
-            Afternoon Milk
+            Notes
           </label>
-          <input
-            id="afternoon-milk"
-            type="text"
-            placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
-            required name="afternoonMilk" value={data?.afternoonMilk} onChange={inputChangeHandler}
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label
-            htmlFor="evening-milk"
-            className="font-dmSans font-[500] text-[16px] text-heading"
-          >
-            Evening Milk
-          </label>
-          <input
-            id="evening-milk"
-            type="text"
-            placeholder="Milk Litres"
-            className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"
-            required name="eveningMilk" value={data?.eveningMilk} onChange={inputChangeHandler}
-          />
-        </div>
-
-
-
-
-
-
+        <textarea id="notes" className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5" rows={4} placeholder="Notes"/>
       </div>
 
       <form className="flex gap-2 justify-end" onSubmit={submitHandler}>
