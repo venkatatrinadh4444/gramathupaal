@@ -28,6 +28,8 @@ const AllFeedStockRecords = () => {
 
   const [allRecords, setAllRecords] = useState([]);
   const [showAddMilk, setShowAddMilk] = useState(false);
+  const [showFeedHistory,setShowFeedHistory] = useState(false)
+  const [feedId,setFeedId] = useState('')
   const [sortByValue, setSortByValue] = useState("");
   const [filterValue, setFilterValue] = useState("");
   const [searchValue, setSearchValue] = useState("");
@@ -71,7 +73,7 @@ const AllFeedStockRecords = () => {
     return Array.from(new Set(visiblePages)).sort((a, b) => a - b);
   };
 
-  useEffect(() => {
+  const fetchAllMilkRecords = () => {
     axios
       .get(`${API_URI}/api/dashboard/feed-stock/all-records/${page}`, {
         withCredentials: true,
@@ -81,9 +83,11 @@ const AllFeedStockRecords = () => {
         setAllRecords(res?.data?.allStockData?.allRecords);
       })
       .catch((err) => console.log(err));
-  }, [page]);
+  };
 
-  console.log(allRecords);
+  useEffect(() => {
+    fetchAllMilkRecords();
+  }, [page]);
 
   // Handling the sortby , filter and search along with pagination
 
@@ -159,12 +163,12 @@ const AllFeedStockRecords = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-3 items-end milk-production-options">
+        <div className="md:flex md:gap-3 items-end grid grid-cols-2 gap-x-3 gap-y-3 feed-stock-filter-options">
           {/* search option */}
-          <div className="border border-para flex gap-2 items-center rounded-lg py-0.5 px-2 justify-between">
+          <div className="border border-para flex gap-2 items-center rounded-lg py-0.5 px-2 justify-between w-full">
             <input
               type="text"
-              placeholder="Search ID"
+              placeholder="Search name"
               className="border-none text-para text-sm w-full"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
@@ -178,7 +182,7 @@ const AllFeedStockRecords = () => {
           </div>
 
           {/* sortBy option */}
-          <div className="relative inline-block">
+          <div className="relative inline-block w-full">
             <label
               htmlFor="sortBy"
               onClick={handleLabelClick}
@@ -213,7 +217,7 @@ const AllFeedStockRecords = () => {
           </div>
 
           {/* filter option */}
-          <div className="relative">
+          <div className="relative w-full">
             <label
               onClick={handleFilterClick}
               className="flex gap-2 items-center rounded-lg py-[9px] px-2.5 bg-[#4A4A4A] justify-between cursor-pointer"
@@ -252,7 +256,7 @@ const AllFeedStockRecords = () => {
 
           {/* add milk record */}
           <div
-            className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center"
+            className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center w-full"
             onClick={() => setShowAddMilk(true)}
           >
             <Image src={whitePlus} alt="add" className="w-[20px] h-auto" />
@@ -300,11 +304,7 @@ const AllFeedStockRecords = () => {
 
                       <div
                         className="flex justify-center"
-                        onClick={() =>
-                          router.push(
-                            `milk-production/${eachRecord?.cattle?.cattleName}`
-                          )
-                        }
+                        onClick={()=>{setShowFeedHistory(true);setFeedId(eachRecord?.id)}}
                       >
                         <button className="bg-[#0E9347] rounded px-1 py-1">
                           <Image
@@ -368,9 +368,20 @@ const AllFeedStockRecords = () => {
 
       {showAddMilk && (
         <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[50%] xl:w-[55%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden sm:p-10 p-6">
-           {/*  <AddFeedStockRecord onAddMilk={() => setShowAddMilk(false)} /> */}
-           <ShowHistory/>
+          <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[40%] xl:w-[45%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden sm:p-10 p-6">
+            <AddFeedStockRecord
+              onAddMilk={() => setShowAddMilk(false)}
+              fetchAllMilkRecords={() => fetchAllMilkRecords()}
+            />
+            {/* <ShowHistory/> */}
+          </div>
+        </div>
+      )}
+
+      {showFeedHistory && (
+        <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[50%] xl:w-[55%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden">
+            <ShowHistory onFeedClose={()=>setShowFeedHistory(false)} id={Number(feedId)}/>
           </div>
         </div>
       )}

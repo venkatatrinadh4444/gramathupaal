@@ -15,10 +15,14 @@ export default function RightSide({
   onEditRecord,
   setEditRecordData,
   allRecords,
+  fetchingAfterAddingNewMilkRecord,
+  setFilterDate
 }: {
   onEditRecord: () => void;
   setEditRecordData: React.Dispatch<React.SetStateAction<{}>>;
   allRecords:any[];
+  fetchingAfterAddingNewMilkRecord:()=>void;
+  setFilterDate: React.Dispatch<React.SetStateAction<string>>
 }) {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
 
@@ -34,6 +38,13 @@ export default function RightSide({
     onEditRecord();
     setEditRecordData(data);
   };
+
+  const deleteMilkRecord = (id:number)=> {
+    axios.delete(`${API_URI}/api/dashboard/milk/delete-specific-animal-milk-records/${id}`,{withCredentials:true}).then(res=>{
+      fetchingAfterAddingNewMilkRecord()
+    }).catch(err=>console.log(err))
+  }
+
 
   return (
     <div className="overflow-hidden">
@@ -65,7 +76,7 @@ export default function RightSide({
           <input
             type="date"
             ref={inputRef}
-            className="absolute left-0 top-0 opacity-0 w-full h-full z-[-1]"
+            className="absolute left-0 top-0 opacity-0 w-full h-full z-[-1]" onChange={(e)=>setFilterDate(e.target.value)}
           />
         </div>
       </div>
@@ -124,7 +135,7 @@ export default function RightSide({
                         <hr className="border-t border-gray-200 my-1" />
 
                         <button
-                          className="flex items-center gap-2 px-4 py-3"
+                          className="flex items-center gap-2 px-4 py-3" onClick={()=>deleteMilkRecord(eachRecord.id)}
                         >
                           <Image
                             src={deleteBtn}

@@ -87,7 +87,7 @@ const Sidebar = () => {
                 Cattle Feed Management
               </p>
             </Link>
-            <Link href="/cattle-management" className="flex items-center gap-10 justify-between">
+            <Link href="/feed-stock-management" className="flex items-center gap-10 justify-between">
               <p className={`text-sm font-dmSans pl-5 ${isActive("/feed-stock-management") ? "text-primary" : "text-heading"}`}>
                 Feed Stock Management
               </p>

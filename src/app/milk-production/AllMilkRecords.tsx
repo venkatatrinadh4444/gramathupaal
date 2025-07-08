@@ -160,9 +160,9 @@ const AllMilkRecords = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-3 items-end milk-production-options">
+        <div className="md:flex md:gap-3 items-end grid grid-cols-2 gap-x-3 gap-y-3 feed-stock-filter-options">
           {/* search option */}
-          <div className="border border-para flex gap-2 items-center rounded-lg py-0.5 px-2 justify-between">
+          <div className="border border-para flex gap-2 items-center rounded-lg py-0.5 px-2 justify-between w-full">
             <input
               type="text"
               placeholder="Search ID"
@@ -179,7 +179,7 @@ const AllMilkRecords = () => {
           </div>
 
           {/* sortBy option */}
-          <div className="relative inline-block">
+          <div className="relative inline-block w-full">
             <label
               htmlFor="sortBy"
               onClick={handleLabelClick}
@@ -214,7 +214,7 @@ const AllMilkRecords = () => {
           </div>
 
           {/* filter option */}
-          <div className="relative">
+          <div className="relative w-full">
             <label
               onClick={handleFilterClick}
               className="flex gap-2 items-center rounded-lg py-[9px] px-2.5 bg-[#4A4A4A] justify-between cursor-pointer"
@@ -253,7 +253,7 @@ const AllMilkRecords = () => {
 
           {/* add milk record */}
           <div
-            className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center"
+            className=" bg-primary cursor-pointer flex gap-2 items-center rounded-lg py-[11px] px-3.5 justify-center w-full"
             onClick={() => setShowAddMilk(true)}
           >
             <Image src={whitePlus} alt="add" className="w-[20px] h-auto" />

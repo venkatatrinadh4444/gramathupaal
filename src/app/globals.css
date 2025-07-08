@@ -68,3 +68,14 @@
         width: 240px;
     }
 }
+
+
+/* feed stock filter options responsive */
+
+@media screen and (max-width:450px) {
+    .feed-stock-filter-options {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+}
