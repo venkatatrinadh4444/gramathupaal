@@ -3,26 +3,36 @@
 import blackCalander from "@/assets/black-calender.png";
 import editImage from "@/assets/edit-milk.png";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { format, parseISO } from "date-fns";
 import threeDots from "@/assets/three-dots.png";
 import editBtn from "@/assets/edit.png";
 import deleteBtn from "@/assets/delete.png";
+import DateRangePickerBox from "./DateRangePicker";
+
+type RangeType = {
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  key: string;
+};
+
 
 export default function RightSide({
   onEditRecord,
   setEditRecordData,
   allRecords,
   fetchingAfterAddingNewMilkRecord,
-  setFilterDate
+  selectedRange,
+  setSelectedRange,
 }: {
   onEditRecord: () => void;
   setEditRecordData: React.Dispatch<React.SetStateAction<{}>>;
   allRecords:any[];
   fetchingAfterAddingNewMilkRecord:()=>void;
-  setFilterDate: React.Dispatch<React.SetStateAction<string>>
+  selectedRange: RangeType[];
+  setSelectedRange: Dispatch<SetStateAction<RangeType[]>>;
 }) {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
 
@@ -57,32 +67,13 @@ export default function RightSide({
             Milk Production Info of This Cattle
           </p>
         </div>
-        <div className="relative inline-flex items-center gap-2 justify-end">
-          <button
-            type="button"
-            onClick={handleClick}
-            className="flex items-center gap-2 border border-para rounded-lg px-[14px] py-[12px]"
-          >
-            <Image
-              src={blackCalander}
-              alt="calendar"
-              className="w-[21px] h-auto"
-            />
-            <span className="text-para font-[500] text-sm">
-              Select Date Range
-            </span>
-          </button>
-
-          <input
-            type="date"
-            ref={inputRef}
-            className="absolute left-0 top-0 opacity-0 w-full h-full z-[-1]" onChange={(e)=>setFilterDate(e.target.value)}
-          />
-        </div>
+        <DateRangePickerBox selectedRange={selectedRange}
+            setSelectedRange={setSelectedRange}/>
       </div>
 
       <hr className="border border-para opacity-20 rounded-lg" />
 
+      {/* Milk Production records data */}
       <div className="overflow-x-auto mt-6">
         <div className="min-w-[700px] w-full">
           {/* head row */}
@@ -95,7 +86,7 @@ export default function RightSide({
             <p></p>
           </div>
 
-          <div className="mt-8 h-[360px] overflow-y-auto">
+          <div className="mt-8 h-[360px] overflow-y-auto scrollbar-enabled">
             {/* data row */}
             {allRecords?.length > 0 &&
               allRecords?.map((eachRecord: any) => {
@@ -158,51 +149,25 @@ export default function RightSide({
   );
 }
 
-{
-  /* <div>
-          <input type="date" id="calendarDate" className=""/>
-          <label
-            htmlFor="calendarDate"
-            className="flex items-center gap-2 border border-para rounded-lg px-[14px] py-[12px] cursor-pointer bg-white"
+{/* <div className="relative inline-flex items-center gap-2 justify-end">
+          <button
+            type="button"
+            onClick={handleClick}
+            className="flex items-center gap-2 border border-para rounded-lg px-[14px] py-[12px]"
           >
             <Image
               src={blackCalander}
               alt="calendar"
               className="w-[21px] h-auto"
             />
-            <span className="text-para font-[500] text-sm">Select Date</span>
-          </label>
-        </div> */
-}
+            <span className="text-para font-[500] text-sm">
+              Select Date Range
+            </span>
+          </button>
 
-{
-  // <div
-  //                     className="relative flex justify-center cursor-pointer"
-  //                     onClick={() => editButtonHandler(eachRecord)}
-  //                   >
-  //                     <Image
-  //                       src={threeDots}
-  //                       alt="options"
-  //                       className="w-[20px] h-auto"
-  //                     />
-  //                     <div className="bg-background rounded-[19px] absolute top-0">
-  //                       <p className="flex gap-2 p-[17px]">
-  //                         <Image
-  //                           src={editBtn}
-  //                           alt="edit-milk"
-  //                           className="w-[20px] h-auto"
-  //                         />
-  //                         <p className="text-[16px] font-[500] text-heading">Edit</p>
-  //                       </p>
-  //                       <hr className="border border-para opacity-20 rounded-lg" />
-  //                       <p className="flex gap-2 p-[17px]">
-  //                         <Image
-  //                           src={deleteBtn}
-  //                           alt="delete-milk"
-  //                           className="w-[20px] h-auto"
-  //                         />
-  //                         <p className="text-[16px] font-[500] text-heading">Delete</p>
-  //                       </p>
-  //                     </div>
-  //                   </div>
-}
+          <input
+            type="date"
+            ref={inputRef}
+            className="absolute left-0 top-0 opacity-0 w-full h-full z-[-1]" onChange={(e)=>setFilterDate(e.target.value)}
+          />
+        </div> */}

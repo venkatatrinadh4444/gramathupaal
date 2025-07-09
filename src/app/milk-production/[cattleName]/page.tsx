@@ -12,6 +12,12 @@ import addIcon from "@/assets/white-plus.png";
 import EditMilkRecord from "../components/EditMilkRecord";
 import DefaultAddMilkRecord from "../components/DefaultAddMilkRecord";
 
+type RangeType = {
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  key: string;
+};
+
 const MilkDetailPage = () => {
   const API_URI = process.env.NEXT_PUBLIC_BACKEND_API_URI;
   const [cattleDetails, setCattleDetails] = useState({}) as any;
@@ -19,7 +25,13 @@ const MilkDetailPage = () => {
   const router = useRouter();
   const [showAddRecrod,setShowAddRecord] = useState(false)
   const [showEditMilk, setShowEditMilk] = useState(false);
-  const [filterDate,setFilterDate] = useState('')
+  const [selectedRange, setSelectedRange] = useState<RangeType[]>([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: 'selection',
+    },
+  ]);
   const [averageMilkGrade,setAverageMilkGrade]=useState('')
   const [editRecordData,setEditRecordData] = useState({})
 
@@ -40,8 +52,8 @@ const MilkDetailPage = () => {
       .catch((err) => console.log(err));
   }
 
-  const filterRecordsByDate = (date:string)=> {
-    axios.get(`${API_URI}/api/dashboard/milk/date-specific-milk-records/${cattleName}?date=${date}`,{withCredentials:true}).then(res=>{
+  const filterRecordsByDate = (selectedRange:any)=> {
+    axios.get(`${API_URI}/api/dashboard/milk/date-specific-milk-records/${cattleName}?fromDate=${selectedRange?.[0]?.startDate}&toDate=${selectedRange?.[0].endDate}`,{withCredentials:true}).then(res=>{
       setAllRecords(res?.data?.allRecords)
     }).catch(err=>console.log(err))
   }
@@ -63,8 +75,8 @@ const MilkDetailPage = () => {
   }, [cattleName, API_URI]);
 
   useEffect(()=>{
-    filterRecordsByDate(filterDate)
-  },[filterDate])
+    filterRecordsByDate(selectedRange)
+  },[selectedRange])
   
 
 
@@ -118,7 +130,8 @@ const MilkDetailPage = () => {
             <LeftSide cattleDetails={cattleDetails} milkGrade={averageMilkGrade}/>
           )}
           <div className="flex-1 overflow-hidden">
-            <RightSide onEditRecord={()=>setShowEditMilk(true)} setEditRecordData={setEditRecordData} allRecords={allRecords} fetchingAfterAddingNewMilkRecord={()=>fetchingAfterAddingNewMilkRecord()} setFilterDate={setFilterDate}/>
+            <RightSide onEditRecord={()=>setShowEditMilk(true)} setEditRecordData={setEditRecordData} allRecords={allRecords} fetchingAfterAddingNewMilkRecord={()=>fetchingAfterAddingNewMilkRecord()} selectedRange={selectedRange}
+            setSelectedRange={setSelectedRange} />
           </div>
         </div>
 

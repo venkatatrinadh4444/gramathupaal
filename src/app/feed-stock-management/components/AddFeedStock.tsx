@@ -58,7 +58,7 @@ export default function AddFeedStockRecord({
       <div className="flex justify-between items-start">
         <div className="w-[90%]">
           <h1 className="font-dmSans text-[20px] text-heading font-[600]">
-            Add Milk Production
+            Add New Feed Item
           </h1>
           {/* Naviagation menu */}
 
@@ -98,7 +98,7 @@ export default function AddFeedStockRecord({
             Feed Name
           </label>
           <input
-            id="morning-milk"
+            id="name"
             type="text"
             placeholder="Feed name"
             className="bg-background text-sm font-[400] text-para rounded-md border-none mt-1.5 py-[14px] pr-[8px] pl-[16px]"

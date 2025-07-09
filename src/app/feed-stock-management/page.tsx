@@ -18,6 +18,7 @@ import whitePlus from "@/assets/white-plus.png";
 import axios from "axios";
 import AddFeedStockRecord from "./components/AddFeedStock";
 import ShowHistory from "./components/ShowHistory";
+import AddVaccinationStockRecord from "./components/AddVaccinationRecord";
 
 const filterOptions = ["KG", "PIECES", "PACKETS"];
 
@@ -369,11 +370,14 @@ const AllFeedStockRecords = () => {
       {showAddMilk && (
         <div className="absolute inset-0 z-50 bg-white/30 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white rounded-3xl shadow-xl max-w-4xl xxl:w-[40%] xl:w-[45%] md:w-[55%] sm:w-[75%] w-[90%]  overflow-hidden sm:p-10 p-6">
-            <AddFeedStockRecord
+            {/* <AddFeedStockRecord
+              onAddMilk={() => setShowAddMilk(false)}
+              fetchAllMilkRecords={() => fetchAllMilkRecords()}
+            /> */}
+            <AddVaccinationStockRecord
               onAddMilk={() => setShowAddMilk(false)}
               fetchAllMilkRecords={() => fetchAllMilkRecords()}
             />
-            {/* <ShowHistory/> */}
           </div>
         </div>
       )}
